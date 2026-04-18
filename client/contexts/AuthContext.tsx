@@ -1,55 +1,91 @@
-// @ts-nocheck
-/**
- * 通用认证上下文
- *
- * 基于固定的 API 接口实现，可复用到其他项目
- * 其他项目使用时，只需修改 @api 的导入路径指向项目的 api 模块
- *
- * 注意：
- * - 如果需要登录/鉴权场景，请扩展本文件，完善 login/logout、token 管理、用户信息获取与刷新等逻辑
- * - 将示例中的占位实现替换为项目实际的接口调用与状态管理
- */
-import React, { createContext, useContext, ReactNode } from "react";
-
-interface UserOut {
-
-}
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthContextType {
-  user: UserOut | null;
-  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string) => Promise<void>;
+  storeId: string | null;
+  login: (storeId: string, authCode: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  updateUser: (userData: Partial<UserOut>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const value: AuthContextType = {
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    isLoading: false,
+const AUTH_KEY = '@lenovo_auth';
+const STORE_ID_KEY = '@lenovo_store_id';
 
-    // 登录逻辑，根据项目实际情况实现
-    login: async (token: string) => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [storeId, setStoreId] = useState<string | null>(null);
 
-    // 登出逻辑，根据项目实际情况实现
-    logout: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-
-    // 更新用户信息，根据项目实际情况实现
-    updateUser: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+  const checkAuth = async () => {
+    try {
+      const auth = await AsyncStorage.getItem(AUTH_KEY);
+      const sid = await AsyncStorage.getItem(STORE_ID_KEY);
+      if (auth === 'true' && sid) {
+        setIsAuthenticated(true);
+        setStoreId(sid);
+      }
+    } catch (error) {
+      console.error('检查授权失败:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
 
-export const useAuth = (): AuthContextType => {
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const login = async (inputStoreId: string, authCode: string) => {
+    try {
+      // 调用后端验证接口
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storeId: inputStoreId, authCode }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.valid) {
+        await AsyncStorage.setItem(AUTH_KEY, 'true');
+        await AsyncStorage.setItem(STORE_ID_KEY, inputStoreId);
+        setIsAuthenticated(true);
+        setStoreId(inputStoreId);
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('登录失败:', error);
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem(AUTH_KEY);
+      await AsyncStorage.removeItem(STORE_ID_KEY);
+      setIsAuthenticated(false);
+      setStoreId(null);
+    } catch (error) {
+      console.error('登出失败:', error);
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, storeId, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) {
+    throw new Error('useAuth 必须在 AuthProvider 内部使用');
   }
   return context;
-};
+}

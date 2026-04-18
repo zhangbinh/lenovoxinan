@@ -1,0 +1,175 @@
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Screen } from '@/components/Screen';
+import { styles } from './styles';
+
+interface PublishedContent {
+  id: string;
+  title: string;
+  platform: string;
+  link: string;
+  publishDate: string;
+  adviceCount: number;
+}
+
+export default function ProfileScreen() {
+  const [publishedContents, setPublishedContents] = useState<PublishedContent[]>([
+    {
+      id: '1',
+      title: '联想笔记本新品体验',
+      platform: '小红书',
+      link: 'https://example.com/post/123',
+      publishDate: '2024-01-15',
+      adviceCount: 3,
+    },
+  ]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newContentLink, setNewContentLink] = useState('');
+
+  const handleAddContent = () => {
+    if (!newContentLink.trim()) {
+      Alert.alert('提示', '请输入内容链接');
+      return;
+    }
+
+    const newContent: PublishedContent = {
+      id: Date.now().toString(),
+      title: '新发布内容',
+      platform: '未知',
+      link: newContentLink,
+      publishDate: new Date().toISOString().split('T')[0],
+      adviceCount: 0,
+    };
+
+    setPublishedContents([newContent, ...publishedContents]);
+    setNewContentLink('');
+    setShowAddModal(false);
+
+    Alert.alert('成功', '内容已添加，系统将从发布日起连续15日提供投流指导');
+  };
+
+  return (
+    <Screen>
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* 顶部用户信息 */}
+          <View style={styles.header}>
+            <View style={styles.userInfo}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>店</Text>
+              </View>
+              <View>
+                <Text style={styles.storeName}>联想西南战区门店</Text>
+                <Text style={styles.storeId}>编号：CD-001</Text>
+              </View>
+            </View>
+
+            {/* 添加内容按钮 */}
+            <TouchableOpacity
+              onPress={() => setShowAddModal(true)}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#6C63FF', '#896BFF']}
+                style={styles.addButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.addButtonText}>+ 添加已发布内容</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* 已发布内容列表 */}
+          <View style={styles.contentListSection}>
+            <Text style={styles.sectionTitle}>已发布内容</Text>
+            <Text style={styles.sectionDescription}>
+              添加内容后，系统将在每天20点提供投流指导建议，连续15日
+            </Text>
+
+            {publishedContents.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>暂无已发布内容</Text>
+                <Text style={styles.emptyHint}>点击上方按钮添加内容</Text>
+              </View>
+            ) : (
+              publishedContents.map((content) => (
+                <View key={content.id} style={styles.contentCard}>
+                  <View style={styles.contentHeader}>
+                    <View style={styles.platformBadge}>
+                      <Text style={styles.platformText}>{content.platform}</Text>
+                    </View>
+                    <Text style={styles.publishDate}>{content.publishDate}</Text>
+                  </View>
+                  <Text style={styles.contentTitle}>{content.title}</Text>
+                  <Text style={styles.contentLink} numberOfLines={1}>{content.link}</Text>
+
+                  <View style={styles.adviceSection}>
+                    <Text style={styles.adviceTitle}>
+                      投流指导 ({content.adviceCount}/15)
+                    </Text>
+                    <Text style={styles.adviceDesc}>
+                      每日20点更新投流建议
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.viewAdviceButton}
+                      onPress={() => Alert.alert('提示', '投流建议功能开发中')}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.viewAdviceButtonText}>
+                        {content.adviceCount > 0 ? '查看最新建议' : '等待投流建议'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+        </ScrollView>
+
+        {/* 添加内容弹窗 */}
+        {showAddModal && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modal}>
+              <Text style={styles.modalTitle}>添加已发布内容</Text>
+              <Text style={styles.modalDescription}>
+                请输入已发布内容的链接，系统将根据发布时间提供15天投流指导
+              </Text>
+
+              <TextInput
+                style={styles.modalInput}
+                placeholder="请输入内容链接（如小红书/抖音/知乎链接）"
+                placeholderTextColor="#B2BEC3"
+                value={newContentLink}
+                onChangeText={setNewContentLink}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonCancel]}
+                  onPress={() => {
+                    setShowAddModal(false);
+                    setNewContentLink('');
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.modalButtonTextCancel}>取消</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonConfirm]}
+                  onPress={handleAddContent}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.modalButtonTextConfirm}>确认添加</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
+    </Screen>
+  );
+}
