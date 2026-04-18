@@ -51,6 +51,7 @@ function RootNavigation() {
     >
       <Stack.Screen name="login" options={{ title: "" }} />
       <Stack.Screen name="(tabs)" options={{ title: "" }} />
+      <Stack.Screen name="content-display" options={{ title: "" }} />
     </Stack>
   );
 }

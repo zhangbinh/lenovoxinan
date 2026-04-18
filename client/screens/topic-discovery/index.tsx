@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, Modal } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
+import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { styles } from './styles';
 
 interface Topic {
@@ -12,20 +13,11 @@ interface Topic {
   selected: boolean;
 }
 
-interface ContentItem {
-  index: number;
-  text: string;
-  publishLink: string;
-}
-
 export default function TopicDiscoveryScreen() {
   const [topicInput, setTopicInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [topics, setTopics] = useState<Topic[]>([]);
-  const [generatedContent, setGeneratedContent] = useState<any>(null);
-  const [contentLoading, setContentLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'xiaohongshu' | 'video' | null>(null);
+  const router = useSafeRouter();
 
   const handleSearchTopics = async () => {
     if (!topicInput.trim()) {
@@ -62,7 +54,7 @@ export default function TopicDiscoveryScreen() {
     })));
   };
 
-  const handleGenerateContent = async (type: 'xiaohongshu' | 'video') => {
+  const handleGenerateContent = (type: 'xiaohongshu' | 'video') => {
     const selectedTopics = topics.filter(t => t.selected);
     if (selectedTopics.length === 0) {
       Alert.alert('提示', '请至少选择1个话题');
@@ -73,94 +65,11 @@ export default function TopicDiscoveryScreen() {
       return;
     }
 
-    setModalType(type);
-    setShowModal(true);
-    setContentLoading(true);
-    setGeneratedContent(null);
-
-    try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/content/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topics: selectedTopics.map(t => t.title),
-          type,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.contents) {
-        // 根据类型提取对应内容
-        if (type === 'xiaohongshu') {
-          const xiaohongshuContent = data.contents.find((c: any) => c.type === 'xiaohongshu');
-          if (xiaohongshuContent) {
-            setGeneratedContent({
-              title: xiaohongshuContent.title,
-              items: xiaohongshuContent.contents.map((text: string, idx: number) => ({
-                index: idx + 1,
-                text,
-                publishLink: '',
-              })),
-            });
-          }
-        } else {
-          // video
-          const videoContents = data.contents.filter((c: any) =>
-            c.type === 'video15s' ||
-            c.type === 'video30s' ||
-            c.type === 'video30sPlus'
-          );
-          if (videoContents && videoContents.length > 0) {
-            const allItems: any[] = [];
-            videoContents.forEach((content: any) => {
-              content.contents.forEach((item: string, idx: number) => {
-                allItems.push({
-                  title: content.title,
-                  text: item,
-                  index: allItems.length + 1,
-                  publishLink: '',
-                });
-              });
-            });
-            setGeneratedContent({
-              title: '短视频脚本',
-              items: allItems,
-            });
-          }
-        }
-      } else {
-        Alert.alert('错误', data.message || '生成内容失败');
-        setShowModal(false);
-      }
-    } catch (error) {
-      Alert.alert('错误', '网络错误，请重试');
-      setShowModal(false);
-    } finally {
-      setContentLoading(false);
-    }
-  };
-
-  const handlePublishLinkChange = (itemIndex: number, link: string) => {
-    setGeneratedContent(prev => ({
-      ...prev,
-      items: prev.items.map((item: ContentItem, idx: number) =>
-        idx === itemIndex ? { ...item, publishLink: link } : item
-      ),
-    }));
-  };
-
-  const handleSubmitPublish = () => {
-    const itemsWithLinks = generatedContent.items.filter((item: ContentItem) => item.publishLink.trim());
-
-    if (itemsWithLinks.length === 0) {
-      Alert.alert('提示', '请至少填写一个发布链接');
-      return;
-    }
-
-    Alert.alert('提交成功', `已成功提交${itemsWithLinks.length}条内容的发布链接，系统将提供15日投流指导建议！`, [
-      { text: '确定', onPress: () => setShowModal(false) }
-    ]);
+    // 跳转到内容展示页面
+    router.push('/content-display', {
+      type,
+      topics: JSON.stringify(selectedTopics.map(t => t.title)),
+    });
   };
 
   return (
@@ -284,84 +193,6 @@ export default function TopicDiscoveryScreen() {
             </View>
           )}
         </ScrollView>
-
-        {/* 内容Modal */}
-        <Modal
-          visible={showModal}
-          animationType="slide"
-          transparent
-          onRequestClose={() => setShowModal(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>{modalType === 'xiaohongshu' ? '小红书文案' : '短视频脚本'}</Text>
-                <TouchableOpacity onPress={() => setShowModal(false)}>
-                  <Text style={styles.modalClose}>✕</Text>
-                </TouchableOpacity>
-              </View>
-
-              {contentLoading ? (
-                <View style={styles.modalLoading}>
-                  <ActivityIndicator size="large" color="#6C63FF" />
-                  <Text style={styles.modalLoadingText}>正在生成内容...</Text>
-                </View>
-              ) : generatedContent && (
-                <ScrollView style={styles.modalBody}>
-                  {generatedContent.items.map((item: ContentItem, idx: number) => (
-                    <View key={idx} style={styles.contentItem}>
-                      <View style={styles.contentItemHeader}>
-                        <View style={styles.contentIndex}>
-                          <Text style={styles.contentIndexText}>{item.index}</Text>
-                        </View>
-                        {item.title && (
-                          <Text style={styles.contentItemTitle}>{item.title}</Text>
-                        )}
-                      </View>
-                      <Text style={styles.contentItemText}>{item.text}</Text>
-                      <View style={styles.publishSection}>
-                        <Text style={styles.publishLabel}>已发布链接（选填）</Text>
-                        <TextInput
-                          style={styles.publishInput}
-                          placeholder="请输入发布后的链接"
-                          placeholderTextColor="#B2BEC3"
-                          value={item.publishLink}
-                          onChangeText={(text) => handlePublishLinkChange(idx, text)}
-                        />
-                      </View>
-                    </View>
-                  ))}
-                </ScrollView>
-              )}
-
-              {generatedContent && (
-                <View style={styles.modalFooter}>
-                  <TouchableOpacity
-                    style={[styles.modalButton, styles.modalButtonCancel]}
-                    onPress={() => setShowModal(false)}
-                    activeOpacity={0.8}
-                  >
-                    <Text style={styles.modalButtonTextCancel}>关闭</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.modalButton, styles.modalButtonConfirm]}
-                    onPress={handleSubmitPublish}
-                    activeOpacity={0.8}
-                  >
-                    <LinearGradient
-                      colors={['#6C63FF', '#896BFF']}
-                      style={styles.modalButtonConfirmGradient}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                    >
-                      <Text style={styles.modalButtonTextConfirm}>提交发布链接</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </View>
-        </Modal>
       </View>
     </Screen>
   );

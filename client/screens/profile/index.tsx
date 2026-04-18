@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
+import { useAuth } from '@/contexts/AuthContext';
 import { styles } from './styles';
 
 interface PublishedContent {
@@ -14,6 +15,7 @@ interface PublishedContent {
 }
 
 export default function ProfileScreen() {
+  const { storeId, storeName, logout } = useAuth();
   const [publishedContents, setPublishedContents] = useState<PublishedContent[]>([
     {
       id: '1',
@@ -60,8 +62,8 @@ export default function ProfileScreen() {
                 <Text style={styles.avatarText}>店</Text>
               </View>
               <View>
-                <Text style={styles.storeName}>联想西南战区门店</Text>
-                <Text style={styles.storeId}>编号：CD-001</Text>
+                <Text style={styles.storeName}>{storeName || '联想门店'}</Text>
+                <Text style={styles.storeId}>编号：{storeId || '未设置'}</Text>
               </View>
             </View>
 
@@ -78,6 +80,20 @@ export default function ProfileScreen() {
               >
                 <Text style={styles.addButtonText}>+ 添加已发布内容</Text>
               </LinearGradient>
+            </TouchableOpacity>
+
+            {/* 退出登录按钮 */}
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert('提示', '确定要退出登录吗？', [
+                  { text: '取消', style: 'cancel' },
+                  { text: '确定', onPress: logout }
+                ]);
+              }}
+              activeOpacity={0.8}
+              style={styles.logoutButton}
+            >
+              <Text style={styles.logoutButtonText}>退出登录</Text>
             </TouchableOpacity>
           </View>
 
@@ -114,7 +130,13 @@ export default function ProfileScreen() {
                     </Text>
                     <TouchableOpacity
                       style={styles.viewAdviceButton}
-                      onPress={() => Alert.alert('提示', '投流建议功能开发中')}
+                      onPress={() => {
+                        if (content.adviceCount > 0) {
+                          Alert.alert('投流建议', '投流建议功能正在开发中，将基于平台投流规则为内容提供优化建议。');
+                        } else {
+                          Alert.alert('等待投流建议', '系统将在内容发布后，从次日起连续15日，每天20点提供投流指导建议。');
+                        }
+                      }}
                       activeOpacity={0.8}
                     >
                       <Text style={styles.viewAdviceButtonText}>

@@ -7,17 +7,17 @@ const router = express.Router();
 // 授权验证接口
 router.post('/verify', async (req: Request, res: Response) => {
   try {
-    const { storeId, authCode } = req.body;
+    const { storeId, storeName, authCode } = req.body;
 
-    if (!storeId || !authCode) {
+    if (!storeId || !storeName || !authCode) {
       return res.status(400).json({
         success: false,
         message: '缺少必要参数'
       });
     }
 
-    // 验证授权码（硬编码为 Lenovoxinan）
-    const isValid = authCode === 'Lenovoxinan';
+    // 验证授权码（硬编码为 lenovoxinan）
+    const isValid = authCode === 'lenovoxinan';
 
     if (isValid) {
       res.json({

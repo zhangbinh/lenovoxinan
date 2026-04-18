@@ -8,6 +8,7 @@ import { styles } from './styles';
 
 export default function LoginScreen() {
   const [storeId, setStoreId] = useState('');
+  const [storeName, setStoreName] = useState('');
   const [authCode, setAuthCode] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -19,21 +20,26 @@ export default function LoginScreen() {
       return;
     }
 
+    if (!storeName.trim()) {
+      Alert.alert('错误', '请输入店面名称');
+      return;
+    }
+
     if (!authCode.trim()) {
-      Alert.alert('错误', '请输入授权码');
+      Alert.alert('错误', '请输入登录密码');
       return;
     }
 
     setLoading(true);
     try {
-      const success = await login(storeId.trim(), authCode.trim());
+      const success = await login(storeId.trim(), storeName.trim(), authCode.trim());
 
       if (success) {
-        Alert.alert('成功', '授权验证成功', [
+        Alert.alert('成功', '登录成功', [
           { text: '确定', onPress: () => router.replace('/') }
         ]);
       } else {
-        Alert.alert('错误', '店面编号或授权码错误');
+        Alert.alert('错误', '店面编号、店面名称或登录密码错误');
       }
     } catch (error) {
       Alert.alert('错误', '网络错误，请重试');
@@ -71,10 +77,23 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputWrapper}>
-              <Text style={styles.label}>授权码</Text>
+              <Text style={styles.label}>店面名称</Text>
               <TextInput
                 style={styles.input}
-                placeholder="请输入授权码"
+                placeholder="请输入店面名称"
+                placeholderTextColor="#B2BEC3"
+                value={storeName}
+                onChangeText={setStoreName}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}>登录密码</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="请输入登录密码"
                 placeholderTextColor="#B2BEC3"
                 value={authCode}
                 onChangeText={setAuthCode}
@@ -99,7 +118,7 @@ export default function LoginScreen() {
               end={{ x: 1, y: 0 }}
             >
               <Text style={styles.loginButtonText}>
-                {loading ? '验证中...' : '进入系统'}
+                {loading ? '登录中...' : '登录系统'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
