@@ -47,15 +47,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="content-creation"
-        options={{
-          title: '创作',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="pen-fancy" size={22} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="hot-list"
         options={{
           title: '热榜',
