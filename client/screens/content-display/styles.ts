@@ -100,6 +100,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 8,
     elevation: 6,
+    zIndex: 1,
   },
   contentItemHeader: {
     flexDirection: 'row',
@@ -144,11 +145,13 @@ export const styles = StyleSheet.create({
   publishInput: {
     backgroundColor: '#E8E8EB',
     borderRadius: 12,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     fontSize: 13,
     color: '#2D3436',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.6)',
+    minHeight: 44,
   },
   footer: {
     flexDirection: 'row',

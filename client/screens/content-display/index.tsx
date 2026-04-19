@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
@@ -161,7 +161,11 @@ export default function ContentDisplayScreen() {
 
   return (
     <Screen>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      >
         {/* 顶部标题 */}
         <View style={styles.header}>
           <TouchableOpacity
@@ -198,7 +202,12 @@ export default function ContentDisplayScreen() {
         )}
 
         {/* 内容列表 */}
-        <ScrollView style={styles.contentList} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.contentList}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
           {generatedContent && generatedContent.items.map((item: ContentItem, idx: number) => (
             <View key={idx} style={styles.contentItem}>
               <View style={styles.contentItemHeader}>
@@ -218,6 +227,10 @@ export default function ContentDisplayScreen() {
                   placeholderTextColor="#B2BEC3"
                   value={item.publishLink}
                   onChangeText={(text) => handlePublishLinkChange(idx, text)}
+                  keyboardType="url"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  clearButtonMode="while-editing"
                 />
               </View>
             </View>
@@ -248,7 +261,7 @@ export default function ContentDisplayScreen() {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Screen>
   );
 }
