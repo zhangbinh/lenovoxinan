@@ -142,6 +142,51 @@ const styles = {
     fontSize: 16,
     fontWeight: '600' as const,
   } as const,
+  strategyTable: {
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 12,
+  } as const,
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  } as const,
+  tableHeaderText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
+    textAlign: 'center',
+  } as const,
+  tableRow: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  } as const,
+  tableCell: {
+    fontSize: 12,
+    color: '#6B7280',
+    textAlign: 'center',
+    flex: 1,
+  } as const,
+  tableHighlight: {
+    color: '#059669',
+    fontWeight: '600',
+  } as const,
+  strategyHint: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontStyle: 'italic',
+    marginTop: 8,
+  } as const,
 };
 
 export default function PromotionAdviceV3() {
@@ -462,6 +507,90 @@ export default function PromotionAdviceV3() {
                     {advice.recommendation.notice}
                   </Text>
                 </View>
+              </View>
+
+              {/* 加热策略表格 */}
+              <View style={styles.resultCard}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 16 }}>加热策略参考</Text>
+
+                {advice.platform === 'xiaohongshu' && (
+                  <View style={styles.strategyTable}>
+                    {/* 表头 */}
+                    <View style={styles.tableHeader}>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
+                    </View>
+
+                    {/* 表格行 */}
+                    <View style={styles.tableRow}>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 2.5%</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 加热</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>薯条加热</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>50-150元</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>1%~2.5%</Text>
+                      <Text style={styles.tableCell}>⚠️ 测试</Text>
+                      <Text style={styles.tableCell}>薯条低预算</Text>
+                      <Text style={styles.tableCell}>30-80元</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>{"\u003c"} 1%</Text>
+                      <Text style={styles.tableCell}>❌ 不加热</Text>
+                      <Text style={styles.tableCell}>—</Text>
+                      <Text style={styles.tableCell}>—</Text>
+                    </View>
+                  </View>
+                )}
+
+                {advice.platform === 'douyin' && (
+                  <View style={styles.strategyTable}>
+                    {/* 表头 */}
+                    <View style={styles.tableHeader}>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
+                      <Text style={[styles.tableHeaderText, { flex: 1.5 }]}>目的</Text>
+                    </View>
+
+                    {/* 表格行 */}
+                    <View style={styles.tableRow}>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 3% 且点赞{"\u003e"}100</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 规模化</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>巨量本地推</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>100-300元/天</Text>
+                      <Text style={[styles.tableCell, styles.tableHighlight]}>引流到店</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>1.5%~3%</Text>
+                      <Text style={styles.tableCell}>⚠️ DOU+测试</Text>
+                      <Text style={styles.tableCell}>DOU+</Text>
+                      <Text style={styles.tableCell}>50-100元</Text>
+                      <Text style={styles.tableCell}>提升互动</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>0.8%~1.5%</Text>
+                      <Text style={styles.tableCell}>⚠️ 低预算</Text>
+                      <Text style={styles.tableCell}>DOU+低预算</Text>
+                      <Text style={styles.tableCell}>30-50元</Text>
+                      <Text style={styles.tableCell}>测试潜力</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableCell}>{"\u003c"} 0.8%</Text>
+                      <Text style={styles.tableCell}>❌ 不加热</Text>
+                      <Text style={styles.tableCell}>—</Text>
+                      <Text style={styles.tableCell}>—</Text>
+                      <Text style={styles.tableCell}>—</Text>
+                    </View>
+                  </View>
+                )}
+
+                <Text style={styles.strategyHint}>
+                  💡 提示：根据您内容的实际互动率，参考上方策略决定是否加热
+                </Text>
               </View>
 
               {/* 优化建议 */}
