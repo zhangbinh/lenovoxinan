@@ -67,10 +67,22 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           "microphonePermission": `西南战区营销App需要访问麦克风以录制视频声音。`,
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-updates",
+        {
+          "url": "https://u.expo.dev"
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "updates": {
+      "url": "https://u.expo.dev",
+      "enabled": true,
+      "checkAutomatically": "ON_ERROR_RECOVERY",
+      "fallbackToCacheTimeout": 0
     }
   }
 }
