@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityInd
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
+import { useAuth } from '@/contexts/AuthContext';
 import { styles } from './styles';
 
 interface ContentItem {
@@ -19,6 +20,7 @@ export default function ContentDisplayScreen() {
     topics: string;
     remark?: string;
   }>();
+  const { storeId } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [generatedContent, setGeneratedContent] = useState<any>(null);
@@ -135,7 +137,7 @@ export default function ContentDisplayScreen() {
     }));
   };
 
-  const handleSubmitPublish = () => {
+  const handleSubmitPublish = async () => {
     const itemsWithLinks = generatedContent.items.filter((item: ContentItem) => item.publishLink.trim());
 
     if (itemsWithLinks.length === 0) {
@@ -143,9 +145,56 @@ export default function ContentDisplayScreen() {
       return;
     }
 
-    Alert.alert('提交成功', `已成功提交${itemsWithLinks.length}条内容的发布链接，系统将提供15日投流指导建议！`, [
-      { text: '确定', onPress: () => router.back() }
-    ]);
+    try {
+      // 调用后端API，保存每条已发布的内容
+      const savePromises = itemsWithLinks.map((item: ContentItem) => {
+        // 判断平台
+        let platform = 'unknown';
+        const url = item.publishLink.toLowerCase();
+        if (url.includes('douyin')) {
+          platform = 'douyin';
+        } else if (url.includes('xiaohongshu') || url.includes('xhslink')) {
+          platform = 'xiaohongshu';
+        } else if (url.includes('zhihu')) {
+          platform = 'zhihu';
+        } else if (url.includes('toutiao') || url.includes('toutiaocdn')) {
+          platform = 'toutiao';
+        }
+
+        /**
+         * 服务端文件：server/src/routes/promotion.ts
+         * 接口：POST /api/v1/promotion/content
+         * Body 参数：storeId: string, publishUrl: string, platform: string, publishDate: string
+         */
+        return fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/content`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            storeId: storeId,
+            publishUrl: item.publishLink,
+            platform,
+            publishDate: new Date().toISOString().split('T')[0],
+          }),
+        });
+      });
+
+      const results = await Promise.all(savePromises);
+
+      // 检查是否有失败的请求
+      const failedCount = results.filter(r => !r.ok).length;
+
+      if (failedCount > 0) {
+        Alert.alert('部分失败', `${itemsWithLinks.length - failedCount}条内容提交成功，${failedCount}条内容提交失败，请重试`);
+        return;
+      }
+
+      Alert.alert('提交成功', `已成功提交${itemsWithLinks.length}条内容的发布链接，系统将在每天20点提供投流指导建议！`, [
+        { text: '确定', onPress: () => router.back() }
+      ]);
+    } catch (error) {
+      console.error('提交发布链接失败:', error);
+      Alert.alert('提交失败', '网络错误，请重试');
+    }
   };
 
   if (loading) {
