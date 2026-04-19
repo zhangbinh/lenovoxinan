@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform as RNPlatform, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform, Dimensions } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -7,10 +7,10 @@ import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
 
-type Platform = 'douyin' | 'xiaohongshu';
+type PlatformType = 'douyin' | 'xiaohongshu';
 
 interface PlatformOption {
-  platform: Platform;
+  platform: PlatformType;
   displayName: string;
   icon: string;
 }
@@ -208,7 +208,7 @@ const styles = {
 export default function PromotionAdvice() {
   const router = useSafeRouter();
   const params = useSafeSearchParams<{ publishUrl?: string; publishDate?: string }>();
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType | null>(null);
   const [publishUrl, setPublishUrl] = useState(params.publishUrl || '');
   const [publishDate, setPublishDate] = useState(params.publishDate || new Date().toISOString().split('T')[0]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -263,7 +263,7 @@ export default function PromotionAdvice() {
   };
 
   // 计算专业的数据分析指标
-  const calculateProfessionalMetrics = (data: any, platform: Platform) => {
+  const calculateProfessionalMetrics = (data: any, platform: PlatformType) => {
     const { metrics } = data;
     
     // CTR（点击率）
@@ -312,7 +312,7 @@ export default function PromotionAdvice() {
   };
 
   // 生成竞品对比
-  const generateCompetitorComparison = (platform: Platform, metrics: any) => {
+  const generateCompetitorComparison = (platform: PlatformType, metrics: any) => {
     const industryAvg = {
       ctr: platform === 'douyin' ? 2.5 : 3.2,
       cvr: platform === 'douyin' ? 5.8 : 7.5,
@@ -531,7 +531,7 @@ export default function PromotionAdvice() {
                 <DateTimePicker
                   value={new Date(tempDate)}
                   mode="date"
-                  display={RNPlatform.OS === 'ios' ? 'spinner' : 'default'}
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                   onChange={(event, selectedDate) => {
                     if (selectedDate) {
                       handleDateChange(selectedDate);

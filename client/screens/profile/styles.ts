@@ -14,6 +14,19 @@ export const styles = StyleSheet.create({
   header: {
     marginBottom: 24,
   },
+  headerGradient: {
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: '#6C63FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -33,6 +46,19 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFFFFF',
   },
+  userText: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  userId: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.8)',
+  },
   storeName: {
     fontSize: 20,
     fontWeight: '700',
@@ -43,18 +69,60 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: '#636E72',
   },
+  functionSection: {
+    marginBottom: 24,
+  },
+  functionItem: {
+    backgroundColor: '#F0F0F3',
+    borderRadius: 24,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    shadowColor: '#D1D9E6',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.7,
+    shadowRadius: 8,
+    elevation: 6,
+    marginBottom: 12,
+  },
+  functionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: 'rgba(108,99,255,0.10)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  functionText: {
+    flex: 1,
+  },
+  functionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2D3436',
+    marginBottom: 4,
+  },
+  functionDesc: {
+    fontSize: 14,
+    color: '#636E72',
+  },
   addButton: {
     borderRadius: 9999,
-    paddingVertical: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     alignItems: 'center',
     shadowColor: '#6C63FF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 6,
+    backgroundColor: '#6C63FF',
   },
   addButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -77,6 +145,11 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FF6B6B',
   },
+  logoutText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FF6B6B',
+  },
   contentListSection: {
     marginTop: 8,
   },
@@ -91,6 +164,28 @@ export const styles = StyleSheet.create({
     color: '#636E72',
     marginBottom: 20,
     lineHeight: 20,
+  },
+  publishedSection: {
+    marginBottom: 24,
+  },
+  publishedHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  publishedTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2D3436',
+  },
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    padding: 40,
+    alignItems: 'center',
   },
   emptyState: {
     backgroundColor: '#F0F0F3',
@@ -114,6 +209,11 @@ export const styles = StyleSheet.create({
   emptyHint: {
     fontSize: 14,
     color: '#B2BEC3',
+  },
+  emptyDesc: {
+    fontSize: 14,
+    color: '#B2BEC3',
+    marginTop: 8,
   },
   contentCard: {
     backgroundColor: '#F0F0F3',
@@ -144,6 +244,12 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#6C63FF',
+  },
+  platformTag: {
+    backgroundColor: 'rgba(108,99,255,0.10)',
+    borderRadius: 9999,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
   },
   publishDate: {
     fontSize: 12,
@@ -214,11 +320,30 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
+  modalContent: {
+    backgroundColor: '#F0F0F3',
+    borderRadius: 24,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    shadowColor: '#D1D9E6',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.7,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#2D3436',
-    marginBottom: 8,
   },
   modalClose: {
     fontSize: 24,

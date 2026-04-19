@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform as RNPlatform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-type Platform = 'douyin' | 'xiaohongshu' | 'zhihu' | 'toutiao';
+type PlatformType = 'douyin' | 'xiaohongshu' | 'zhihu' | 'toutiao';
 
 interface PlatformOption {
-  platform: Platform;
+  platform: PlatformType;
   displayName: string;
   icon: string;
 }
@@ -22,7 +22,7 @@ const platforms: PlatformOption[] = [
 export default function PromotionAdvice() {
   const router = useSafeRouter();
   const params = useSafeSearchParams<{ publishUrl?: string; publishDate?: string }>();
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType | null>(null);
   const [publishUrl, setPublishUrl] = useState(params.publishUrl || '');
   const [publishDate, setPublishDate] = useState(params.publishDate || new Date().toISOString().split('T')[0]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -347,7 +347,7 @@ export default function PromotionAdvice() {
                 <DateTimePicker
                   value={new Date(tempDate)}
                   mode="date"
-                  display={RNPlatform.OS === 'ios' ? 'spinner' : 'default'}
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                   onChange={(event, selectedDate) => {
                     if (selectedDate) {
                       handleDateChange(selectedDate);

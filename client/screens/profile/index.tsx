@@ -8,6 +8,15 @@ import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { useFocusEffect } from 'expo-router';
 import { styles } from './styles';
 
+type PublishedContent = {
+  id: number;
+  platform: string;
+  title: string;
+  link: string;
+  publishDate: string;
+  adviceCount: number;
+};
+
 export default function ProfileScreen() {
   const { storeId, storeName, logout } = useAuth();
   const router = useSafeRouter();
