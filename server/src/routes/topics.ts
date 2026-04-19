@@ -8,7 +8,7 @@ const router = express.Router();
 // 生成话题方向接口
 router.post('/generate', async (req: Request, res: Response) => {
   try {
-    const { topic } = req.body;
+    const { topic, remark } = req.body;
 
     if (!topic) {
       return res.status(400).json({
@@ -72,7 +72,7 @@ router.post('/generate', async (req: Request, res: Response) => {
       { role: "system", content: systemPrompt },
       {
         role: "user",
-        content: `用户话题：${topic}\n\n相关热榜内容：\n${hotContent}\n\n请生成5个话题方向，输出纯JSON格式。`
+        content: `用户话题：${topic}${remark ? `\n\n用户备注：${remark}` : ''}\n\n相关热榜内容：\n${hotContent}\n\n请生成5个话题方向，输出纯JSON格式。`
       }
     ];
 

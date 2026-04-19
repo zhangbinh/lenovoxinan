@@ -3,6 +3,7 @@ import cors from "cors";
 import authRouter from "./routes/auth";
 import topicsRouter from "./routes/topics";
 import contentRouter from "./routes/content";
+import hottopicsRouter from "./routes/hottopics";
 
 const app = express();
 const port = process.env.PORT || 9091;
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/topics', topicsRouter);
 app.use('/api/v1/content', contentRouter);
+app.use('/api/v1/hottopics', hottopicsRouter);
 
 app.get('/api/v1/health', (req, res) => {
   console.log('Health check success');

@@ -36,6 +36,18 @@ export const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.6)',
     minHeight: 80,
     textAlignVertical: 'top',
+    marginBottom: 16,
+  },
+  remarkInput: {
+    backgroundColor: '#E8E8EB',
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 14,
+    color: '#2D3436',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.6)',
+    minHeight: 60,
+    textAlignVertical: 'top',
     marginBottom: 20,
   },
   searchButton: {

@@ -15,6 +15,7 @@ interface Topic {
 
 export default function TopicDiscoveryScreen() {
   const [topicInput, setTopicInput] = useState('');
+  const [remarkInput, setRemarkInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [topics, setTopics] = useState<Topic[]>([]);
   const router = useSafeRouter();
@@ -30,7 +31,10 @@ export default function TopicDiscoveryScreen() {
       const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/topics/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: topicInput.trim() }),
+        body: JSON.stringify({ 
+          topic: topicInput.trim(),
+          remark: remarkInput.trim()
+        }),
       });
 
       const data = await response.json();
@@ -69,6 +73,7 @@ export default function TopicDiscoveryScreen() {
     router.push('/content-display', {
       type,
       topics: JSON.stringify(selectedTopics.map(t => t.title)),
+      remark: remarkInput.trim(),
     });
   };
 
@@ -91,6 +96,16 @@ export default function TopicDiscoveryScreen() {
               onChangeText={setTopicInput}
               multiline
               numberOfLines={3}
+            />
+
+            <TextInput
+              style={styles.remarkInput}
+              placeholder="备注：描述产品卖点、活动细节或其他补充信息（选填）"
+              placeholderTextColor="#B2BEC3"
+              value={remarkInput}
+              onChangeText={setRemarkInput}
+              multiline
+              numberOfLines={2}
             />
 
             <TouchableOpacity

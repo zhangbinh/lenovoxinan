@@ -7,7 +7,7 @@ const router = express.Router();
 // 生成内容接口
 router.post('/generate', async (req: Request, res: Response) => {
   try {
-    const { topics, type } = req.body;
+    const { topics, type, remark } = req.body;
 
     if (!topics || !Array.isArray(topics) || topics.length === 0) {
       return res.status(400).json({
@@ -20,6 +20,7 @@ router.post('/generate', async (req: Request, res: Response) => {
     const llmClient = new LLMClient(config);
 
     const topicsText = topics.join('、');
+    const remarkText = remark ? `\n\n用户备注：${remark}` : '';
     const contents: any[] = [];
 
     // 根据type生成不同内容
@@ -46,7 +47,7 @@ router.post('/generate', async (req: Request, res: Response) => {
         { role: "system", content: xiaohongshuSystemPrompt },
         {
           role: "user",
-          content: `话题：${topicsText}\n\n请创作3条小红书爆款文案，输出纯JSON数组格式。`
+          content: `话题：${topicsText}${remarkText}\n\n请创作3条小红书爆款文案，输出纯JSON数组格式。`
         }
       ];
 
@@ -111,7 +112,7 @@ router.post('/generate', async (req: Request, res: Response) => {
         { role: "system", content: videoSystemPrompt },
         {
           role: "user",
-          content: `话题：${topicsText}\n\n请创作短视频脚本，输出纯JSON格式。`
+          content: `话题：${topicsText}${remarkText}\n\n请创作短视频脚本，输出纯JSON格式。`
         }
       ];
 

@@ -17,12 +17,14 @@ export default function ContentDisplayScreen() {
   const params = router.useSafeSearchParams<{
     type: 'xiaohongshu' | 'video';
     topics: string;
+    remark?: string;
   }>();
 
   const [loading, setLoading] = useState(true);
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [contentType] = useState<'xiaohongshu' | 'video'>(params.type || 'xiaohongshu');
   const [topics] = useState(params.topics ? JSON.parse(params.topics) : []);
+  const [remark] = useState(params.remark || '');
 
   const generateContent = async () => {
     if (topics.length === 0) {
@@ -39,6 +41,7 @@ export default function ContentDisplayScreen() {
         body: JSON.stringify({
           topics,
           type: contentType,
+          remark: remark,
         }),
       });
 
@@ -160,6 +163,14 @@ export default function ContentDisplayScreen() {
             ))}
           </ScrollView>
         </View>
+
+        {/* 备注信息 */}
+        {remark && remark.trim() !== '' && (
+          <View style={styles.remarkSection}>
+            <Text style={styles.remarkLabel}>用户备注：</Text>
+            <Text style={styles.remarkText}>{remark}</Text>
+          </View>
+        )}
 
         {/* 内容列表 */}
         <ScrollView style={styles.contentList} showsVerticalScrollIndicator={false}>

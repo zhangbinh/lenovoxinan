@@ -65,6 +65,24 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#6C63FF',
   },
+  remarkSection: {
+    backgroundColor: 'rgba(108,99,255,0.05)',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+  },
+  remarkLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#636E72',
+    marginBottom: 4,
+  },
+  remarkText: {
+    fontSize: 14,
+    color: '#2D3436',
+    lineHeight: 20,
+  },
   contentList: {
     flex: 1,
     paddingHorizontal: 24,
