@@ -305,7 +305,7 @@ export default function PromotionAdviceV3() {
                         </Text>
                       </View>
                       {selectedContent?.id === content.id && (
-                        <FontAwesome6 name="check-circle" size={20} color="#FFFFFF" />
+                        <FontAwesome6 name="circle-check" size={20} color="#FFFFFF" />
                       )}
                     </View>
                   </TouchableOpacity>
@@ -420,7 +420,10 @@ export default function PromotionAdviceV3() {
                 <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 16 }}>投流建议</Text>
 
                 <View style={styles.recommendationCard}>
-                  <Text style={styles.recommendationTitle}>💰 投流决策</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <FontAwesome6 name="money-bill-wave" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                    <Text style={styles.recommendationTitle}>投流决策</Text>
+                  </View>
                   <Text style={styles.recommendationText}>
                     {advice.recommendation.decision}
                   </Text>
@@ -428,7 +431,10 @@ export default function PromotionAdviceV3() {
 
                 {advice.platform === 'douyin' && (
                   <View style={styles.recommendationCard}>
-                    <Text style={styles.recommendationTitle}>📢 投流工具选择</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                      <FontAwesome6 name="bullhorn" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                      <Text style={styles.recommendationTitle}>投流工具选择</Text>
+                    </View>
                     <Text style={styles.recommendationText}>
                       {advice.recommendation.tool}
                     </Text>
@@ -437,7 +443,10 @@ export default function PromotionAdviceV3() {
 
                 {advice.platform === 'xiaohongshu' && (
                   <View style={styles.recommendationCard}>
-                    <Text style={styles.recommendationTitle">📍 投流范围</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                      <FontAwesome6 name="location-dot" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                      <Text style={styles.recommendationTitle}>投流范围</Text>
+                    </View>
                     <Text style={styles.recommendationText}>
                       {advice.recommendation.scope}
                     </Text>
@@ -445,7 +454,10 @@ export default function PromotionAdviceV3() {
                 )}
 
                 <View style={styles.recommendationCard}>
-                  <Text style={styles.recommendationTitle}>⚠️ 注意事项</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <FontAwesome6 name="triangle-exclamation" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                    <Text style={styles.recommendationTitle}>注意事项</Text>
+                  </View>
                   <Text style={styles.recommendationText}>
                     {advice.recommendation.notice}
                   </Text>
@@ -506,7 +518,29 @@ export default function PromotionAdviceV3() {
                   }}
                   maximumDate={new Date()}
                   minimumDate={new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)}
+                  nativeID="publishDatePicker"
                 />
+
+                {Platform.OS === 'web' && (
+                  <View style={{ marginTop: 16, padding: 12, backgroundColor: '#F3F4F6', borderRadius: 8 }}>
+                    <Text style={{ fontSize: 12, color: '#6B7280', marginBottom: 8 }}>
+                      Web平台日期选择器：
+                    </Text>
+                    <input
+                      type="date"
+                      value={tempDate}
+                      max={new Date().toISOString().split('T')[0]}
+                      min={new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                      onChange={(e: any) => handleDateChange(new Date(e.target.value))}
+                      style={{
+                        padding: 8,
+                        borderRadius: 8,
+                        border: '1px solid #E5E7EB',
+                        fontSize: 16,
+                      }}
+                    />
+                  </View>
+                )}
 
                 <TouchableOpacity
                   style={styles.modalButton}
