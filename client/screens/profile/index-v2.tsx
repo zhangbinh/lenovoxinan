@@ -176,9 +176,6 @@ export default function ProfileScreen() {
         <View style={styles.publishedSection}>
           <View style={styles.publishedHeader}>
             <Text style={styles.publishedTitle}>已发布内容</Text>
-            <TouchableOpacity style={styles.addButton} onPress={() => setShowAddModal(true)}>
-              <Text style={styles.addButtonText}>+ 添加</Text>
-            </TouchableOpacity>
           </View>
 
           {loading ? (
