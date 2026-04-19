@@ -10,13 +10,10 @@ import { styles } from './styles';
 export default function ProfileScreen() {
   const { storeId, storeName, logout } = useAuth();
   const router = useSafeRouter();
-
-  // === 所有useState声明 - 只声明一次 ===
   const [publishedContents, setPublishedContents] = useState<PublishedContent[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newContentLink, setNewContentLink] = useState('');
-  // =============================================
 
   const fetchPublishedContents = useCallback(async () => {
     if (!storeId) return;
