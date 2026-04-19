@@ -15,8 +15,8 @@ interface PlatformOption {
 }
 
 const platforms: PlatformOption[] = [
-  { platform: 'douyin', displayName: '抖音', icon: '💙' },
-  { platform: 'xiaohongshu', displayName: '小红书', icon: '💖' },
+  { platform: 'douyin', displayName: '抖音', icon: 'music' },
+  { platform: 'xiaohongshu', displayName: '小红书', icon: 'heart' },
 ];
 
 export default function PromotionAdvice() {
@@ -109,7 +109,12 @@ export default function PromotionAdvice() {
                 }`}
                 style={{ minWidth: '45%' }}
               >
-                <Text className="text-2xl text-center mb-1">{item.icon}</Text>
+                <FontAwesome6
+                  name={item.icon as any}
+                  size={24}
+                  color={selectedPlatform === item.platform ? '#6C63FF' : '#6B7280'}
+                  style={{ marginBottom: 8 }}
+                />
                 <Text
                   className={`text-center text-sm font-medium ${
                     selectedPlatform === item.platform

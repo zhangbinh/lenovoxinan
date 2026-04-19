@@ -145,6 +145,12 @@ export default function ContentDisplayScreen() {
       return;
     }
 
+    if (!storeId) {
+      Alert.alert('错误', '请先登录');
+      router.replace('/login');
+      return;
+    }
+
     try {
       // 调用后端API，保存每条已发布的内容
       const savePromises = itemsWithLinks.map((item: ContentItem) => {
@@ -160,6 +166,8 @@ export default function ContentDisplayScreen() {
         } else if (url.includes('toutiao') || url.includes('toutiaocdn')) {
           platform = 'toutiao';
         }
+
+        console.log(`提交内容: storeId=${storeId}, platform=${platform}, url=${item.publishLink}`);
 
         /**
          * 服务端文件：server/src/routes/promotion.ts
@@ -184,6 +192,7 @@ export default function ContentDisplayScreen() {
       const failedCount = results.filter(r => !r.ok).length;
 
       if (failedCount > 0) {
+        console.error(`提交失败: ${failedCount}/${itemsWithLinks.length}`);
         Alert.alert('部分失败', `${itemsWithLinks.length - failedCount}条内容提交成功，${failedCount}条内容提交失败，请重试`);
         return;
       }

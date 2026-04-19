@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
@@ -117,7 +118,7 @@ export default function ProfileScreen() {
         <View style={styles.functionSection}>
           <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/promotion-advice')}>
             <View style={styles.functionIcon}>
-              <Text style={styles.functionIconText}>💡</Text>
+              <FontAwesome6 name="lightbulb" size={24} color="#F59E0B" />
             </View>
             <View style={styles.functionText}>
               <Text style={styles.functionTitle}>智能投流建议</Text>

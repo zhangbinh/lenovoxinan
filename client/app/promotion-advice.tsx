@@ -1,1 +1,1 @@
-export { default } from "@/screens/promotion-advice";
+export { default } from "@/screens/promotion-advice/index-v2";

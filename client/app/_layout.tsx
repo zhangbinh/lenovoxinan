@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { LogBox } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Provider } from '@/components/Provider';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { useSegments, useRootNavigationState } from 'expo-router';
 
@@ -59,9 +59,9 @@ function RootNavigation() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
+    <Provider>
       <RootNavigation />
       <Toast />
-    </AuthProvider>
+    </Provider>
   );
 }
