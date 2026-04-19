@@ -27,7 +27,6 @@ export default function ContentDisplayScreen() {
   const [contentType] = useState<'xiaohongshu' | 'video'>(params.type || 'xiaohongshu');
   const [topics] = useState(params.topics ? JSON.parse(params.topics) : []);
   const remark = params.remark || '';
-  const [submittedLinks, setSubmittedLinks] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const generateContent = async () => {
@@ -130,95 +129,6 @@ export default function ContentDisplayScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePublishLinkChange = (itemIndex: number, link: string) => {
-    setGeneratedContent((prev: any) => ({
-      ...prev,
-      items: prev.items.map((item: ContentItem, idx: number) =>
-        idx === itemIndex ? { ...item, publishLink: link } : item
-      ),
-    }));
-  };
-
-  const handleSubmitPublish = async () => {
-    const itemsWithLinks = generatedContent.items.filter((item: ContentItem) => item.publishLink.trim());
-
-    if (itemsWithLinks.length === 0) {
-      Alert.alert('提示', '请至少填写一个发布链接');
-      return;
-    }
-
-    if (!storeId) {
-      Alert.alert('错误', '请先登录');
-      router.replace('/login');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // 调用后端API，保存每条已发布的内容
-      const savePromises = itemsWithLinks.map((item: ContentItem) => {
-        // 判断平台
-        let platform = 'unknown';
-        const url = item.publishLink.toLowerCase();
-        if (url.includes('douyin')) {
-          platform = 'douyin';
-        } else if (url.includes('xiaohongshu') || url.includes('xhslink')) {
-          platform = 'xiaohongshu';
-        } else if (url.includes('zhihu')) {
-          platform = 'zhihu';
-        } else if (url.includes('toutiao') || url.includes('toutiaocdn')) {
-          platform = 'toutiao';
-        }
-
-        console.log(`提交内容: storeId=${storeId}, platform=${platform}, url=${item.publishLink}`);
-
-        /**
-         * 服务端文件：server/src/routes/promotion.ts
-         * 接口：POST /api/v1/promotion/content
-         * Body 参数：storeId: string, publishUrl: string, platform: string, publishDate: string
-         */
-        return fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/content`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            storeId: storeId,
-            publishUrl: item.publishLink,
-            platform,
-            publishDate: new Date().toISOString().split('T')[0],
-          }),
-        });
-      });
-
-      const results = await Promise.all(savePromises);
-
-      // 检查是否有失败的请求
-      const failedCount = results.filter(r => !r.ok).length;
-
-      if (failedCount > 0) {
-        console.error(`提交失败: ${failedCount}/${itemsWithLinks.length}`);
-        Alert.alert('部分失败', `${itemsWithLinks.length - failedCount}条内容提交成功，${failedCount}条内容提交失败，请重试`);
-        setIsSubmitting(false);
-        return;
-      }
-
-      // 更新已提交链接的状态
-      const newSubmittedLinks = new Set(submittedLinks);
-      itemsWithLinks.forEach((item: ContentItem) => {
-        newSubmittedLinks.add(item.index);
-      });
-      setSubmittedLinks(newSubmittedLinks);
-
-      Alert.alert('提交成功', `已成功提交${itemsWithLinks.length}条内容的发布链接！\n\n系统将在每天20点提供投流指导建议，你可以在"投流指导"页面查看。`, [
-        { text: '确定', onPress: () => setIsSubmitting(false) }
-      ]);
-    } catch (error) {
-      console.error('提交发布链接失败:', error);
-      Alert.alert('提交失败', '网络错误，请重试');
-      setIsSubmitting(false);
-    }
-  };
-
   if (loading) {
     return (
       <Screen>
@@ -280,9 +190,8 @@ export default function ContentDisplayScreen() {
           contentContainerStyle={{ paddingBottom: 20, flexGrow: 1 }}
         >
           {generatedContent && generatedContent.items.map((item: ContentItem, idx: number) => {
-            const isSubmitted = submittedLinks.has(item.index);
             return (
-              <View key={idx} style={[styles.contentItem, isSubmitted && styles.contentItemSubmitted]}>
+              <View key={idx} style={styles.contentItem}>
                 <View style={styles.contentItemHeader}>
                   <View style={styles.contentIndex}>
                     <Text style={styles.contentIndexText}>{item.index}</Text>
@@ -290,48 +199,37 @@ export default function ContentDisplayScreen() {
                   {item.title && (
                     <Text style={styles.contentItemTitle}>{item.title}</Text>
                   )}
-                  {isSubmitted && (
-                    <View style={styles.submittedBadge}>
-                      <Text style={styles.submittedBadgeText}>✓ 已提交</Text>
-                    </View>
-                  )}
                 </View>
                 <Text style={styles.contentItemText}>{item.text}</Text>
                 <View style={styles.publishSection}>
                   <Text style={styles.publishLabel}>已发布链接（选填）</Text>
                   <TextInput
-                    style={[styles.publishInput, isSubmitted && styles.publishInputSubmitted]}
+                    style={styles.publishInput}
                     placeholder="请输入发布后的链接（如：小红书/抖音/知乎链接）"
                     placeholderTextColor="#B2BEC3"
                     value={item.publishLink}
-                    onChangeText={(text) => handlePublishLinkChange(idx, text)}
+                    onChangeText={(text) => setGeneratedContent((prev: any) => ({
+                      ...prev,
+                      items: prev.items.map((i: ContentItem, iIdx: number) =>
+                        iIdx === idx ? { ...i, publishLink: text } : i
+                      ),
+                    }))}
                     keyboardType="url"
                     autoCapitalize="none"
                     autoCorrect={false}
                     clearButtonMode="while-editing"
-                    editable={!isSubmitted}
                   />
-                  {isSubmitted && (
-                    <Text style={styles.submittedHint}>该链接已提交，无法修改</Text>
-                  )}
                 </View>
               </View>
             );
           })}
         </ScrollView>
 
-        {/* 底部提交按钮 */}
+        {/* 底部返回按钮 */}
         <View style={styles.footer}>
           <TouchableOpacity
-            style={[styles.footerButton, styles.footerButtonCancel]}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.footerButtonTextCancel}>取消</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             style={styles.footerButton}
-            onPress={handleSubmitPublish}
+            onPress={() => router.replace('/')}
             activeOpacity={0.8}
           >
             <LinearGradient
@@ -340,7 +238,7 @@ export default function ContentDisplayScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              <Text style={styles.footerButtonTextConfirm}>提交链接</Text>
+              <Text style={styles.footerButtonText}>返回主页面</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>

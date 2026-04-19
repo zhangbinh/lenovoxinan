@@ -240,13 +240,13 @@ export default function ProfileScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/promotion-advice')}>
+          <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/content-operation-select')}>
             <View style={styles.functionIcon}>
               <FontAwesome6 name="lightbulb" size={24} color="#F59E0B" />
             </View>
             <View style={styles.functionText}>
-              <Text style={styles.functionTitle}>智能投流建议</Text>
-              <Text style={styles.functionDesc}>基于数据的15日投流指导</Text>
+              <Text style={styles.functionTitle}>内容运营建议</Text>
+              <Text style={styles.functionDesc}>基于数据的智能运营指导</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -279,8 +279,8 @@ export default function ProfileScreen() {
                 </View>
                 <Text style={styles.contentTitle}>{item.title}</Text>
                 <Text style={styles.contentLink} numberOfLines={1}>{item.link}</Text>
-                <TouchableOpacity style={styles.viewAdviceButton} onPress={() => router.push('/promotion-advice', { publishUrl: item.link, publishDate: item.publishDate })} activeOpacity={0.8}>
-                  <Text style={styles.viewAdviceButtonText}>{item.adviceCount > 0 ? '查看最新建议' : '等待投流建议'}</Text>
+                <TouchableOpacity style={styles.viewAdviceButton} onPress={() => router.push('/content-operation-select', { platform: item.platform, publishUrl: item.link })} activeOpacity={0.8}>
+                  <Text style={styles.viewAdviceButtonText}>{item.adviceCount > 0 ? '查看运营建议' : '获取运营建议'}</Text>
                 </TouchableOpacity>
               </View>
             ))

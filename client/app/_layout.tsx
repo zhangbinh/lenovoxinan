@@ -55,6 +55,9 @@ function RootNavigation() {
       <Stack.Screen name="promotion-advice" options={{ title: "" }} />
       <Stack.Screen name="operations-assistant" options={{ title: "" }} />
       <Stack.Screen name="content-templates" options={{ title: "" }} />
+      <Stack.Screen name="content-operation-select" options={{ title: "" }} />
+      <Stack.Screen name="content-operation-input" options={{ title: "" }} />
+      <Stack.Screen name="content-operation-result" options={{ title: "" }} />
     </Stack>
   );
 }

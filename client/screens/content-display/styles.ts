@@ -102,27 +102,6 @@ export const styles = StyleSheet.create({
     elevation: 6,
     zIndex: 1,
   },
-  contentItemSubmitted: {
-    backgroundColor: '#E8F5E9',
-    borderColor: '#4CAF50',
-  },
-  submittedBadge: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 9999,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  submittedBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  submittedHint: {
-    fontSize: 11,
-    color: '#4CAF50',
-    marginTop: 4,
-    fontStyle: 'italic',
-  },
   contentItemHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -174,10 +153,6 @@ export const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.6)',
     minHeight: 44,
   },
-  publishInputSubmitted: {
-    backgroundColor: '#F1F8E9',
-    color: '#2E7D32',
-  },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -201,15 +176,6 @@ export const styles = StyleSheet.create({
     width: 0, // 防止flex子元素溢出
     paddingHorizontal: 8, // 添加水平 padding 防止文字溢出
   },
-  footerButtonCancel: {
-    backgroundColor: '#E8E8EB',
-    marginRight: Platform.OS === 'web' ? 12 : 8, // 移动端减小间距
-  },
-  footerButtonTextCancel: {
-    fontSize: Platform.OS === 'web' ? 15 : 14, // 移动端减小字号
-    fontWeight: '700',
-    color: '#2D3436',
-  },
   footerButtonGradient: {
     width: '100%',
     height: '100%',
@@ -217,7 +183,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 16,
   },
-  footerButtonTextConfirm: {
+  footerButtonText: {
     fontSize: Platform.OS === 'web' ? 15 : 14, // 移动端减小字号
     fontWeight: '700',
     color: '#FFFFFF',
