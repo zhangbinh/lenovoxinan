@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { styles } from './styles';
-
-const coverImage = require('@/assets/lenovo_app_ui.webp');
 
 interface Topic {
   id: number;
@@ -85,15 +83,6 @@ export default function TopicDiscoveryScreen() {
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* 顶部输入区域 */}
           <View style={styles.inputSection}>
-            {/* 封面图片 */}
-            <View style={styles.coverContainer}>
-              <ImageBackground
-                source={coverImage}
-                style={styles.coverImage}
-                resizeMode="cover"
-              />
-            </View>
-
             <Text style={styles.sectionTitle}>话题发现</Text>
             <Text style={styles.sectionDescription}>
               输入您想探索的话题，AI将为您搜索各大平台热榜并生成爆款话题方向

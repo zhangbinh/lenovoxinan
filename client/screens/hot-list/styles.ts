@@ -14,16 +14,6 @@ export const styles = StyleSheet.create({
   header: {
     marginBottom: 24,
   },
-  coverContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  coverImage: {
-    width: 280,
-    height: 200,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
   title: {
     fontSize: 28,
     fontWeight: '800',

@@ -4,19 +4,16 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F0F3',
-    justifyContent: 'center',
+  },
+  scrollContent: {
     paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+    justifyContent: 'center',
+    minHeight: '100%',
   },
   content: {
     width: '100%',
-  },
-  coverContainer: {
-    marginBottom: 32,
-    alignItems: 'center',
-  },
-  coverImage: {
-    width: 280,
-    height: 200,
   },
   logoContainer: {
     alignItems: 'center',

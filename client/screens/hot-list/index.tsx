@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { styles } from './styles';
-
-const coverImage = require('@/assets/lenovo_app_ui.webp');
 
 interface HotTopic {
   id: string;
@@ -81,15 +79,6 @@ export default function HotListScreen() {
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* 顶部标题 */}
           <View style={styles.header}>
-            {/* 封面图片 */}
-            <View style={styles.coverContainer}>
-              <ImageBackground
-                source={coverImage}
-                style={styles.coverImage}
-                resizeMode="cover"
-              />
-            </View>
-
             <Text style={styles.title}>专业热榜</Text>
             <Text style={styles.subtitle}>3C数码各平台热点话题参考</Text>
           </View>

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { styles } from './styles';
-
-const coverImage = require('@/assets/lenovo_app_ui.webp');
 
 export default function LoginScreen() {
   const [storeId, setStoreId] = useState('');
@@ -56,17 +54,13 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <View style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.content}>
-            {/* 封面图片 */}
-            <View style={styles.coverContainer}>
-              <ImageBackground
-                source={coverImage}
-                style={styles.coverImage}
-                resizeMode="contain"
-              />
-            </View>
-
             {/* Logo 区域 */}
             <View style={styles.logoContainer}>
               <View style={styles.logo}>
@@ -76,70 +70,70 @@ export default function LoginScreen() {
               <Text style={styles.subtitle}>Lenovo Southwest Region Marketing Assistant</Text>
             </View>
 
-          {/* 输入区域 */}
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.label}>店面编号</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="请输入店面编号"
-                placeholderTextColor="#B2BEC3"
-                value={storeId}
-                onChangeText={setStoreId}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+            {/* 输入区域 */}
+            <View style={styles.inputContainer}>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.label}>店面编号</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="请输入店面编号"
+                  placeholderTextColor="#B2BEC3"
+                  value={storeId}
+                  onChangeText={setStoreId}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.label}>店面名称</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="请输入店面名称"
+                  placeholderTextColor="#B2BEC3"
+                  value={storeName}
+                  onChangeText={setStoreName}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.label}>登录密码</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="请输入登录密码"
+                  placeholderTextColor="#B2BEC3"
+                  value={authCode}
+                  onChangeText={setAuthCode}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry
+                />
+              </View>
             </View>
 
-            <View style={styles.inputWrapper}>
-              <Text style={styles.label}>店面名称</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="请输入店面名称"
-                placeholderTextColor="#B2BEC3"
-                value={storeName}
-                onChangeText={setStoreName}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-
-            <View style={styles.inputWrapper}>
-              <Text style={styles.label}>登录密码</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="请输入登录密码"
-                placeholderTextColor="#B2BEC3"
-                value={authCode}
-                onChangeText={setAuthCode}
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry
-              />
-            </View>
-          </View>
-
-          {/* 登录按钮 */}
-          <TouchableOpacity
-            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={['#6C63FF', '#896BFF']}
-              style={styles.loginButtonGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+            {/* 登录按钮 */}
+            <TouchableOpacity
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+              activeOpacity={0.8}
             >
-              <Text style={styles.loginButtonText}>
-                {loading ? '登录中...' : '登录系统'}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+              <LinearGradient
+                colors={['#6C63FF', '#896BFF']}
+                style={styles.loginButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.loginButtonText}>
+                  {loading ? '登录中...' : '登录系统'}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Screen>
   );
 }
