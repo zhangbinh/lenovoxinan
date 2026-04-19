@@ -180,19 +180,25 @@ export const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 24,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 16,
     backgroundColor: '#F0F0F3',
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.05)',
+    width: '100%',
+    minHeight: 80,
   },
   footerButton: {
     flex: 1,
     borderRadius: 16,
     paddingVertical: 14,
     alignItems: 'center',
-    minHeight: 48,
     justifyContent: 'center',
+    minHeight: 48,
+    width: 0, // 防止flex子元素溢出
   },
   footerButtonCancel: {
     backgroundColor: '#E8E8EB',

@@ -277,7 +277,7 @@ export default function ContentDisplayScreen() {
           style={styles.contentList}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 20, flexGrow: 1 }}
         >
           {generatedContent && generatedContent.items.map((item: ContentItem, idx: number) => {
             const isSubmitted = submittedLinks.has(item.index);
