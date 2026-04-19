@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import express from 'express';
-import { FetchClient, Config } from 'coze-coding-dev-sdk';
+import { socialPlatformService } from '../services/social-platform';
 import { generateAdvice } from '../lib/promotion-rules';
 import {
   addPublishedContent,
@@ -47,49 +47,39 @@ router.post('/advice', async (req: Request, res: Response) => {
       return;
     }
 
-    // 使用fetch-url抓取数据
-    const config = new Config();
-    const client = new FetchClient(config);
-
-    // 尝试抓取发布链接的数据
-    let metrics = {
-      views: 0,
-      likes: 0,
-      comments: 0,
-      shares: 0,
-      completionRate: 0,
-      readRate: 0,
-      interactRate: 0,
-      collectRate: 0,
-    };
+    // 使用真实API获取数据
+    let metrics: any;
 
     try {
-      const response = await client.fetch(publishUrl);
+      // 从环境变量检测是否配置了API密钥
+      const hasAccessToken = !!(
+        process.env.XIAOHONGSHU_ACCESS_TOKEN ||
+        process.env.DOUYIN_ACCESS_TOKEN
+      );
 
-      // 从抓取的内容中提取数据
-      console.log('抓取成功:', response.title);
-
-      // 根据抓取的内容长度估算播放量/阅读量
-      const textLength = response.content
-        .filter((item: any) => item.type === 'text')
-        .map((item: any) => item.text)
-        .join('')
-        .length;
-
-      // 模拟数据生成（实际应用中需要解析真实数据）
-      metrics = {
-        views: Math.floor(textLength * 10 + Math.random() * 5000),
-        likes: Math.floor(metrics.views * (0.02 + Math.random() * 0.08)),
-        comments: Math.floor(metrics.views * (0.005 + Math.random() * 0.02)),
-        shares: Math.floor(metrics.views * (0.001 + Math.random() * 0.01)),
-        completionRate: 30 + Math.random() * 40, // 30-70%
-        readRate: 5 + Math.random() * 15, // 5-20%
-        interactRate: 2 + Math.random() * 8, // 2-10%
-        collectRate: 1 + Math.random() * 5, // 1-6%
-      };
+      if (hasAccessToken) {
+        // 使用真实API获取数据
+        console.log('使用真实API获取数据...');
+        metrics = await socialPlatformService.getMetrics(publishUrl);
+        console.log('获取真实数据成功:', metrics);
+      } else {
+        // 未配置API密钥，使用模拟数据
+        console.log('未配置API密钥，使用模拟数据');
+        metrics = {
+          views: Math.floor(1000 + Math.random() * 9000),
+          likes: Math.floor(50 + Math.random() * 450),
+          comments: Math.floor(10 + Math.random() * 90),
+          shares: Math.floor(5 + Math.random() * 45),
+          completionRate: 30 + Math.random() * 40,
+          readRate: 5 + Math.random() * 15,
+          interactRate: 2 + Math.random() * 8,
+          collectRate: 1 + Math.random() * 5,
+        };
+      }
     } catch (error) {
-      console.error('抓取失败，使用模拟数据:', error);
-      // 如果抓取失败，使用模拟数据
+      console.error('获取真实数据失败，使用模拟数据:', error);
+
+      // 降级方案：使用模拟数据
       metrics = {
         views: Math.floor(1000 + Math.random() * 9000),
         likes: Math.floor(50 + Math.random() * 450),
