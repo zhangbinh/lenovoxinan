@@ -24,11 +24,11 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F0F0F3',
   },
   backButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
   },
   backButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#6C63FF',
   },
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     color: '#2D3436',
   },
   placeholder: {
-    width: 40,
+    width: 30,
   },
   topicsSection: {
     backgroundColor: '#F0F0F3',

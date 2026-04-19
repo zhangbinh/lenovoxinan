@@ -27,6 +27,7 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newContentLink, setNewContentLink] = useState('');
+  const [selectedPlatform, setSelectedPlatform] = useState<'xiaohongshu' | 'douyin' | ''>('');
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   // =============================================
@@ -64,13 +65,12 @@ export default function ProfileScreen() {
       Alert.alert('提示', '请输入内容链接');
       return;
     }
+    if (!selectedPlatform) {
+      Alert.alert('提示', '请选择发布平台');
+      return;
+    }
     try {
-      let platform = 'unknown';
-      const url = newContentLink.toLowerCase();
-      if (url.includes('douyin')) platform = 'douyin';
-      else if (url.includes('xiaohongshu') || url.includes('xhslink')) platform = 'xiaohongshu';
-      else if (url.includes('zhihu')) platform = 'zhihu';
-      else if (url.includes('toutiao') || url.includes('toutiaocdn')) platform = 'toutiao';
+      const platform = selectedPlatform;
 
       const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/content`, {
         method: 'POST',
@@ -86,6 +86,7 @@ export default function ProfileScreen() {
       if (result.success) {
         Alert.alert('成功', result.data.message);
         setNewContentLink('');
+        setSelectedPlatform('');
         setShowAddModal(false);
         fetchPublishedContents();
       } else {
@@ -300,12 +301,27 @@ export default function ProfileScreen() {
               <TouchableOpacity onPress={() => setShowAddModal(false)}><Text style={styles.modalClose}>✕</Text></TouchableOpacity>
             </View>
             <View style={styles.modalBody}>
-              <Text style={styles.modalLabel}>内容链接</Text>
+              <Text style={styles.modalLabel}>选择平台</Text>
+              <View style={styles.platformSelector}>
+                <TouchableOpacity
+                  style={[styles.platformOption, selectedPlatform === 'xiaohongshu' && styles.platformOptionSelected]}
+                  onPress={() => setSelectedPlatform('xiaohongshu')}
+                >
+                  <Text style={[styles.platformOptionText, selectedPlatform === 'xiaohongshu' && styles.platformOptionTextSelected]}>小红书</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.platformOption, selectedPlatform === 'douyin' && styles.platformOptionSelected]}
+                  onPress={() => setSelectedPlatform('douyin')}
+                >
+                  <Text style={[styles.platformOptionText, selectedPlatform === 'douyin' && styles.platformOptionTextSelected]}>抖音</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={[styles.modalLabel, { marginTop: 16 }]}>内容链接</Text>
               <TextInput style={styles.modalInput} placeholder="请输入发布链接" placeholderTextColor="#B2BEC3" value={newContentLink} onChangeText={setNewContentLink} autoCapitalize="none" autoCorrect={false} />
-              <Text style={styles.modalHint}>支持抖音、小红书、知乎、今日头条</Text>
+              <Text style={styles.modalHint}>输入发布后的链接，系统将提供针对性的运营建议</Text>
             </View>
             <View style={styles.modalFooter}>
-              <TouchableOpacity style={[styles.modalButton, styles.modalButtonCancel]} onPress={() => setShowAddModal(false)}>
+              <TouchableOpacity style={[styles.modalButton, styles.modalButtonCancel]} onPress={() => { setShowAddModal(false); setSelectedPlatform(''); setNewContentLink(''); }}>
                 <Text style={styles.modalButtonTextCancel}>取消</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modalButton, styles.modalButtonConfirm]} onPress={handleAddContent}>

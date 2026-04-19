@@ -384,6 +384,33 @@ export const styles = StyleSheet.create({
     color: '#2D3436',
     marginBottom: 12,
   },
+  platformSelector: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  platformOption: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#E8E8EB',
+    backgroundColor: '#F8F9FA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  platformOptionSelected: {
+    borderColor: '#6C63FF',
+    backgroundColor: 'rgba(108,99,255,0.10)',
+  },
+  platformOptionText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#636E72',
+  },
+  platformOptionTextSelected: {
+    color: '#6C63FF',
+  },
   modalInput: {
     backgroundColor: '#E8E8EB',
     borderRadius: 16,
