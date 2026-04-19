@@ -182,7 +182,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
+    paddingHorizontal: Platform.OS === 'web' ? 24 : 16, // 移动端减小 padding
     paddingVertical: 16,
     paddingBottom: Platform.OS === 'ios' ? 34 : 16,
     backgroundColor: '#F0F0F3',
@@ -199,10 +199,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 48,
     width: 0, // 防止flex子元素溢出
+    paddingHorizontal: 8, // 添加水平 padding 防止文字溢出
   },
   footerButtonCancel: {
     backgroundColor: '#E8E8EB',
-    marginRight: 12,
+    marginRight: Platform.OS === 'web' ? 12 : 8, // 移动端减小间距
   },
   footerButtonTextCancel: {
     fontSize: 15,
