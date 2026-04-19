@@ -340,7 +340,7 @@ export default function ContentDisplayScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              <Text style={styles.footerButtonTextConfirm}>提交发布链接</Text>
+              <Text style={styles.footerButtonTextConfirm}>提交链接</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>

@@ -182,7 +182,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Platform.OS === 'web' ? 24 : 16, // 移动端减小 padding
+    paddingHorizontal: Platform.OS === 'web' ? 24 : 12, // 移动端进一步减小 padding
     paddingVertical: 16,
     paddingBottom: Platform.OS === 'ios' ? 34 : 16,
     backgroundColor: '#F0F0F3',
@@ -194,10 +194,10 @@ export const styles = StyleSheet.create({
   footerButton: {
     flex: 1,
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: Platform.OS === 'web' ? 14 : 12, // 移动端减小垂直 padding
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: Platform.OS === 'web' ? 48 : 44, // 移动端减小最小高度
     width: 0, // 防止flex子元素溢出
     paddingHorizontal: 8, // 添加水平 padding 防止文字溢出
   },
@@ -206,7 +206,7 @@ export const styles = StyleSheet.create({
     marginRight: Platform.OS === 'web' ? 12 : 8, // 移动端减小间距
   },
   footerButtonTextCancel: {
-    fontSize: 15,
+    fontSize: Platform.OS === 'web' ? 15 : 14, // 移动端减小字号
     fontWeight: '700',
     color: '#2D3436',
   },
@@ -218,7 +218,7 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
   },
   footerButtonTextConfirm: {
-    fontSize: 15,
+    fontSize: Platform.OS === 'web' ? 15 : 14, // 移动端减小字号
     fontWeight: '700',
     color: '#FFFFFF',
   },
