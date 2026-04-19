@@ -130,8 +130,8 @@ export default function ProfileScreen() {
               <FontAwesome6 name="lightbulb" size={24} color="#F59E0B" />
             </View>
             <View style={styles.functionText}>
-              <Text style={styles.functionTitle}>智能投流建议</Text>
-              <Text style={styles.functionDesc}>基于数据的15日投流指导</Text>
+              <Text style={styles.functionTitle}>内容运营建议</Text>
+              <Text style={styles.functionDesc}>基于数据的内容运营</Text>
             </View>
           </TouchableOpacity>
         </View>
