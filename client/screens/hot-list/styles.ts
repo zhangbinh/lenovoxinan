@@ -36,7 +36,6 @@ export const styles = StyleSheet.create({
   },
   filterButtons: {
     flexDirection: 'row',
-    gap: 12,
   },
   filterButton: {
     backgroundColor: '#F0F0F3',
@@ -45,6 +44,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     borderWidth: 2,
     borderColor: 'transparent',
+    marginRight: 12,
     shadowColor: '#D1D9E6',
     shadowOffset: { width: 6, height: 6 },
     shadowOpacity: 0.7,
@@ -67,7 +67,6 @@ export const styles = StyleSheet.create({
   platformFilter: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
   },
   platformTag: {
     backgroundColor: '#F0F0F3',
@@ -76,6 +75,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     borderWidth: 2,
     borderColor: 'transparent',
+    marginRight: 8,
+    marginBottom: 8,
     shadowColor: '#D1D9E6',
     shadowOffset: { width: 6, height: 6 },
     shadowOpacity: 0.7,

@@ -43,7 +43,7 @@ const styles = {
   } as const,
   platformCard: {
     flex: 1,
-    minWidth: '45%' as const,
+    width: 140,
     padding: 16,
     borderRadius: 16,
     borderWidth: 2,
@@ -346,7 +346,7 @@ export default function PromotionAdvice() {
 
           {/* 平台选择 */}
           <Text style={styles.sectionLabel}>选择发布平台 *</Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 24, gap: 12 }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 24 }}>
             {platforms.map((item) => (
               <TouchableOpacity
                 key={item.platform}
@@ -354,6 +354,7 @@ export default function PromotionAdvice() {
                 style={[
                   styles.platformCard,
                   selectedPlatform === item.platform ? styles.platformCardSelected : styles.platformCardDefault,
+                  { marginRight: 12, marginBottom: 12 }
                 ]}
               >
                 <FontAwesome6

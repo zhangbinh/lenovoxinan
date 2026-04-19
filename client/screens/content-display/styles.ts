@@ -156,7 +156,6 @@ export const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     padding: 24,
-    gap: 12,
     backgroundColor: '#F0F0F3',
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.05)',
@@ -166,6 +165,7 @@ export const styles = StyleSheet.create({
     borderRadius: 9999,
     paddingVertical: 14,
     alignItems: 'center',
+    marginHorizontal: 6,
   },
   footerButtonCancel: {
     backgroundColor: '#E8E8EB',

@@ -220,11 +220,19 @@ export const styles = StyleSheet.create({
     color: '#2D3436',
     marginBottom: 8,
   },
-  modalDescription: {
-    fontSize: 14,
+  modalClose: {
+    fontSize: 24,
     color: '#636E72',
+    paddingHorizontal: 8,
+  },
+  modalBody: {
     marginBottom: 20,
-    lineHeight: 20,
+  },
+  modalLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2D3436',
+    marginBottom: 12,
   },
   modalInput: {
     backgroundColor: '#E8E8EB',
@@ -234,9 +242,13 @@ export const styles = StyleSheet.create({
     color: '#2D3436',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.6)',
-    marginBottom: 20,
+    marginBottom: 8,
   },
-  modalButtons: {
+  modalHint: {
+    fontSize: 12,
+    color: '#636E72',
+  },
+  modalFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

@@ -148,11 +148,11 @@ export const styles = StyleSheet.create({
   },
   actionButtons: {
     marginTop: 24,
-    gap: 12,
   },
   actionButton: {
     borderRadius: 9999,
     overflow: 'hidden',
+    marginBottom: 12,
     shadowColor: '#6C63FF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,

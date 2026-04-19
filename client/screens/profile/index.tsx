@@ -184,11 +184,11 @@ export default function ProfileScreen() {
               <Text style={styles.modalHint}>支持抖音、小红书、知乎、今日头条</Text>
             </View>
             <View style={styles.modalFooter}>
-              <TouchableOpacity style={[styles.modalButton, styles.modalCancelButton]} onPress={() => setShowAddModal(false)}>
-                <Text style={styles.modalCancelText}>取消</Text>
+              <TouchableOpacity style={[styles.modalButton, styles.modalButtonCancel]} onPress={() => setShowAddModal(false)}>
+                <Text style={styles.modalButtonTextCancel}>取消</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.modalButton, styles.modalConfirmButton]} onPress={handleAddContent}>
-                <Text style={styles.modalConfirmText}>确定</Text>
+              <TouchableOpacity style={[styles.modalButton, styles.modalButtonConfirm]} onPress={handleAddContent}>
+                <Text style={styles.modalButtonTextConfirm}>确定</Text>
               </TouchableOpacity>
             </View>
           </View>
