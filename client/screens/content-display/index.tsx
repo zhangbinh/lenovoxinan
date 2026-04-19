@@ -224,24 +224,6 @@ export default function ContentDisplayScreen() {
             );
           })}
         </ScrollView>
-
-        {/* 底部返回按钮 */}
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.footerButton}
-            onPress={() => router.replace('/')}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={['#6C63FF', '#896BFF']}
-              style={styles.footerButtonGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            >
-              <Text style={styles.footerButtonText}>返回主页面</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
       </KeyboardAvoidingView>
     </Screen>
   );

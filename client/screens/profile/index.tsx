@@ -247,7 +247,7 @@ export default function ProfileScreen() {
             </View>
             <View style={styles.functionText}>
               <Text style={styles.functionTitle}>内容运营建议</Text>
-              <Text style={styles.functionDesc}>基于数据的智能运营指导</Text>
+              <Text style={styles.functionDesc}>基于数据的内容运营</Text>
             </View>
           </TouchableOpacity>
         </View>

@@ -24,11 +24,11 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F0F0F3',
   },
   backButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 6,
+    paddingVertical: 3,
+    paddingHorizontal: 4,
   },
   backButtonText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '600',
     color: '#6C63FF',
   },
