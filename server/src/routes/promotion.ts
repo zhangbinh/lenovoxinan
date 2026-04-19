@@ -2,7 +2,13 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import { FetchClient, Config } from 'coze-coding-dev-sdk';
 import { generateAdvice } from '../lib/promotion-rules';
-import { addPublishedContent, triggerPromotionAdvice } from '../lib/promotion-cron';
+import {
+  addPublishedContent,
+  triggerPromotionAdvice,
+  getPromotionAdvices,
+  getAllPublishedContents,
+  type PublishedContent,
+} from '../lib/promotion-cron';
 
 const router = express.Router();
 
@@ -138,16 +144,6 @@ router.get('/platforms', (_req: Request, res: Response) => {
         displayName: '小红书',
         icon: '📕',
       },
-      {
-        platform: 'zhihu',
-        displayName: '知乎',
-        icon: '💡',
-      },
-      {
-        platform: 'toutiao',
-        displayName: '今日头条',
-        icon: '📰',
-      },
     ],
   });
 });
@@ -191,6 +187,63 @@ router.post('/content', async (req: Request, res: Response) => {
     });
   }
 });
+
+// 获取已发布内容列表
+router.get('/contents', async (req: Request, res: Response) => {
+  try {
+    const { storeId } = req.query;
+
+    if (!storeId) {
+      res.status(400).json({
+        success: false,
+        message: '缺少参数: storeId',
+      });
+      return;
+    }
+
+    const contents = [];
+    const allContents = getAllPublishedContents();
+
+    // 遍历所有已发布内容，找到该店面的内容
+    for (const [contentId, content] of allContents.entries()) {
+      if (content.storeId === storeId) {
+        const advices = getPromotionAdvices(contentId);
+        const platformName = getPlatformDisplayName(content.platform);
+
+        contents.push({
+          id: contentId,
+          title: `${platformName}内容`,
+          platform: platformName,
+          link: content.publishUrl,
+          publishDate: content.publishDate.toISOString().split('T')[0],
+          adviceCount: advices.length,
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      data: contents,
+    });
+  } catch (error) {
+    console.error('获取已发布内容失败:', error);
+    res.status(500).json({
+      success: false,
+      message: '获取已发布内容失败',
+    });
+  }
+});
+
+// 获取平台显示名称
+function getPlatformDisplayName(platform: string): string {
+  const platformNames: Record<string, string> = {
+    douyin: '抖音',
+    xiaohongshu: '小红书',
+    zhihu: '知乎',
+    toutiao: '今日头条',
+  };
+  return platformNames[platform] || '未知';
+}
 
 // 手动触发投流建议生成（用于测试）
 router.post('/trigger', async (_req: Request, res: Response) => {

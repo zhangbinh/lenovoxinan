@@ -4,7 +4,7 @@ import { FetchClient, Config } from 'coze-coding-dev-sdk';
 import { generateAdvice } from '../lib/promotion-rules';
 
 // 内存存储（实际应用中应使用数据库）
-interface PublishedContent {
+export interface PublishedContent {
   id: string;
   storeId: string;
   publishUrl: string;
@@ -13,7 +13,7 @@ interface PublishedContent {
   adviceCount: number;
 }
 
-interface PromotionAdvice {
+export interface PromotionAdvice {
   id: string;
   contentId: string;
   storeId: string;
@@ -27,6 +27,11 @@ const promotionAdvices = new Map<string, PromotionAdvice[]>();
 // 添加已发布内容
 export function addPublishedContent(content: PublishedContent) {
   publishedContents.set(content.id, content);
+}
+
+// 获取所有已发布内容（用于API）
+export function getAllPublishedContents() {
+  return publishedContents;
 }
 
 // 获取已发布内容

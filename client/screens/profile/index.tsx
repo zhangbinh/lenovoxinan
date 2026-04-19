@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
+import { useFocusEffect } from 'expo-router';
 import { styles } from './styles';
 
 interface PublishedContent {
@@ -18,16 +19,48 @@ interface PublishedContent {
 export default function ProfileScreen() {
   const { storeId, storeName, logout } = useAuth();
   const router = useSafeRouter();
-  const [publishedContents, setPublishedContents] = useState<PublishedContent[]>([
-    {
-      id: '1',
-      title: '联想笔记本新品体验',
-      platform: '小红书',
-      link: 'https://example.com/post/123',
-      publishDate: '2024-01-15',
-      adviceCount: 3,
-    },
-  ]);
+  const [publishedContents, setPublishedContents] = useState<PublishedContent[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newContentLink, setNewContentLink] = useState('');
+
+  // 从后端获取已发布内容
+  const fetchPublishedContents = useCallback(async () => {
+    if (!storeId) return;
+
+    setLoading(true);
+    try {
+      /**
+       * 服务端文件：server/src/routes/promotion.ts
+       * 接口：GET /api/v1/promotion/contents?storeId=xxx
+       * Query 参数：storeId: string
+       */
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/contents?storeId=${storeId}`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        // 过滤超过15天的内容
+        const now = new Date();
+        const filtered = result.data.filter((item: PublishedContent) => {
+          const publishDate = new Date(item.publishDate);
+          const daysDiff = Math.floor((now.getTime() - publishDate.getTime()) / (1000 * 60 * 60 * 24));
+          return daysDiff <= 15;
+        });
+        setPublishedContents(filtered);
+      }
+    } catch (error) {
+      console.error('获取已发布内容失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [storeId]);
+
+  // 页面聚焦时刷新数据
+  useFocusEffect(
+    useCallback(() => {
+      fetchPublishedContents();
+    }, [fetchPublishedContents])
+  );
   const [showAddModal, setShowAddModal] = useState(false);
   const [newContentLink, setNewContentLink] = useState('');
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type Platform = 'douyin' | 'xiaohongshu' | 'zhihu' | 'toutiao';
 
@@ -16,8 +17,6 @@ interface PlatformOption {
 const platforms: PlatformOption[] = [
   { platform: 'douyin', displayName: '抖音', icon: '💙' },
   { platform: 'xiaohongshu', displayName: '小红书', icon: '💖' },
-  { platform: 'zhihu', displayName: '知乎', icon: '💡' },
-  { platform: 'toutiao', displayName: '今日头条', icon: '📰' },
 ];
 
 export default function PromotionAdvice() {
@@ -26,8 +25,19 @@ export default function PromotionAdvice() {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
   const [publishUrl, setPublishUrl] = useState(params.publishUrl || '');
   const [publishDate, setPublishDate] = useState(params.publishDate || new Date().toISOString().split('T')[0]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(publishDate);
   const [loading, setLoading] = useState(false);
   const [advice, setAdvice] = useState<any>(null);
+
+  const handleDateChange = (date: Date) => {
+    setTempDate(date.toISOString().split('T')[0]);
+  };
+
+  const handleConfirmDate = () => {
+    setPublishDate(tempDate);
+    setShowDatePicker(false);
+  };
 
   const handleSubmit = async () => {
     if (!selectedPlatform || !publishUrl || !publishDate) {
@@ -138,14 +148,15 @@ export default function PromotionAdvice() {
           </Text>
           <TouchableOpacity
             className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4"
-            onPress={() => {
-              alert('请手动输入日期（YYYY-MM-DD）');
-            }}
+            onPress={() => setShowDatePicker(true)}
           >
             <Text className="text-base text-gray-900 dark:text-white">
-              {publishDate || '请选择发布日期'}
+              {publishDate}
             </Text>
           </TouchableOpacity>
+          <Text className="text-xs text-gray-400 mt-2">
+            请选择内容发布的日期
+          </Text>
         </View>
 
         {/* 提交按钮 */}
@@ -304,6 +315,53 @@ export default function PromotionAdvice() {
             )}
           </View>
         )}
+
+        {/* 日期选择器 Modal */}
+        <Modal
+          visible={showDatePicker}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowDatePicker(false)}
+        >
+          <TouchableOpacity
+            style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }}
+            activeOpacity={1}
+            onPress={() => setShowDatePicker(false)}
+          >
+            <View className="flex-1 justify-end">
+              <View className="bg-white dark:bg-gray-800 rounded-t-3xl p-6">
+                <View className="flex-row justify-between items-center mb-4">
+                  <Text className="text-lg font-bold text-gray-900 dark:text-white">
+                    选择发布日期
+                  </Text>
+                  <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                    <Text className="text-purple-500 font-medium">取消</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <DateTimePicker
+                  value={new Date(tempDate)}
+                  mode="date"
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) {
+                      handleDateChange(selectedDate);
+                    }
+                  }}
+                  maximumDate={new Date()}
+                  minimumDate={new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)} // 最多30天前
+                />
+
+                <TouchableOpacity
+                  className="bg-purple-500 rounded-2xl p-4 items-center mt-4"
+                  onPress={handleConfirmDate}
+                >
+                  <Text className="text-white font-semibold">确认</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </ScrollView>
     </Screen>
   );
