@@ -59,7 +59,10 @@ router.post('/generate', async (req: Request, res: Response) => {
       let xiaohongshuContents: string[] = [];
       try {
         xiaohongshuContents = JSON.parse(xiaohongshuResponse.content);
+        // 确保每个元素都是字符串
+        xiaohongshuContents = xiaohongshuContents.map((item: any) => String(item));
       } catch (error) {
+        console.error('解析小红书内容失败，使用默认文案，原始内容:', xiaohongshuResponse.content);
         // 如果解析失败，返回默认文案
         xiaohongshuContents = [
           `✨${topicsText}实测体验！真香预警！\n\n最近入手了这款${topicsText}，真心推荐给大家！\n\n🌟 外观设计：颜值超高，一眼心动\n🌟 性能表现：流畅不卡顿，体验超棒\n🌟 性价比：这个价位绝对值得\n\n使用了一段时间，真心觉得不错，想要的小伙伴可以冲啦！\n\n#${topicsText} #好物分享 #新品体验`,
@@ -129,7 +132,18 @@ router.post('/generate', async (req: Request, res: Response) => {
 
       try {
         videoContents = JSON.parse(videoResponse.content);
+        // 确保所有数组元素都是字符串
+        if (videoContents.video15s) {
+          videoContents.video15s = videoContents.video15s.map((item: any) => String(item));
+        }
+        if (videoContents.video30s) {
+          videoContents.video30s = videoContents.video30s.map((item: any) => String(item));
+        }
+        if (videoContents.video30sPlus) {
+          videoContents.video30sPlus = videoContents.video30sPlus.map((item: any) => String(item));
+        }
       } catch (error) {
+        console.error('解析短视频内容失败，使用默认脚本，原始内容:', videoResponse.content);
         // 如果解析失败，返回默认脚本
         videoContents = {
           video15s: [

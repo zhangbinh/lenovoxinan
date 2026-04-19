@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
-import { useSafeRouter } from '@/hooks/useSafeRouter';
+import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { styles } from './styles';
 
 interface ContentItem {
@@ -14,7 +14,7 @@ interface ContentItem {
 
 export default function ContentDisplayScreen() {
   const router = useSafeRouter();
-  const params = router.useSafeSearchParams<{
+  const params = useSafeSearchParams<{
     type: 'xiaohongshu' | 'video';
     topics: string;
     remark?: string;
@@ -24,7 +24,7 @@ export default function ContentDisplayScreen() {
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [contentType] = useState<'xiaohongshu' | 'video'>(params.type || 'xiaohongshu');
   const [topics] = useState(params.topics ? JSON.parse(params.topics) : []);
-  const [remark] = useState(params.remark || '');
+  const remark = params.remark || '';
 
   const generateContent = async () => {
     if (topics.length === 0) {
@@ -35,9 +35,18 @@ export default function ContentDisplayScreen() {
 
     setLoading(true);
     try {
+      console.log('生成内容参数:', { topics, type: contentType, remark });
+
+      /**
+       * 服务端文件：server/src/routes/content.ts
+       * 接口：POST /api/v1/content/generate
+       * Body 参数：topics: string[], type: string, remark: string
+       */
       const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/content/generate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
         body: JSON.stringify({
           topics,
           type: contentType,
@@ -47,19 +56,25 @@ export default function ContentDisplayScreen() {
 
       const data = await response.json();
 
+      console.log('API响应:', data);
+
       if (response.ok && data.contents) {
         // 根据类型提取对应内容
         if (contentType === 'xiaohongshu') {
           const xiaohongshuContent = data.contents.find((c: any) => c.type === 'xiaohongshu');
-          if (xiaohongshuContent) {
+          if (xiaohongshuContent && xiaohongshuContent.contents) {
+            console.log('小红书内容:', xiaohongshuContent.contents);
             setGeneratedContent({
               title: xiaohongshuContent.title,
               items: xiaohongshuContent.contents.map((text: string, idx: number) => ({
                 index: idx + 1,
-                text,
+                text: text, // JSON.parse会自动解码Unicode转义序列
                 publishLink: '',
               })),
             });
+          } else {
+            Alert.alert('错误', '未找到小红书内容');
+            router.back();
           }
         } else {
           // video
@@ -71,19 +86,26 @@ export default function ContentDisplayScreen() {
           if (videoContents && videoContents.length > 0) {
             const allItems: any[] = [];
             videoContents.forEach((content: any) => {
-              content.contents.forEach((item: string, idx: number) => {
-                allItems.push({
-                  title: content.title,
-                  text: item,
-                  index: allItems.length + 1,
-                  publishLink: '',
+              if (content.contents) {
+                console.log(`${content.title}:`, content.contents);
+                content.contents.forEach((item: string) => {
+                  allItems.push({
+                    title: content.title,
+                    text: item, // JSON.parse会自动解码Unicode转义序列
+                    index: allItems.length + 1,
+                    publishLink: '',
+                  });
                 });
-              });
+              }
             });
+            console.log('短视频脚本总数:', allItems.length);
             setGeneratedContent({
               title: '短视频脚本',
               items: allItems,
             });
+          } else {
+            Alert.alert('错误', '未找到短视频内容');
+            router.back();
           }
         }
       } else {
@@ -91,6 +113,7 @@ export default function ContentDisplayScreen() {
         router.back();
       }
     } catch (error) {
+      console.error('生成内容失败:', error);
       Alert.alert('错误', '网络错误，请重试');
       router.back();
     } finally {
@@ -104,7 +127,7 @@ export default function ContentDisplayScreen() {
   }, []);
 
   const handlePublishLinkChange = (itemIndex: number, link: string) => {
-    setGeneratedContent(prev => ({
+    setGeneratedContent((prev: any) => ({
       ...prev,
       items: prev.items.map((item: ContentItem, idx: number) =>
         idx === itemIndex ? { ...item, publishLink: link } : item
@@ -155,13 +178,15 @@ export default function ContentDisplayScreen() {
         {/* 话题标签 */}
         <View style={styles.topicsSection}>
           <Text style={styles.topicsLabel}>选中的话题：</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {topics.map((topic: string, idx: number) => (
-              <View key={idx} style={styles.topicTag}>
-                <Text style={styles.topicText}>{topic}</Text>
-              </View>
-            ))}
-          </ScrollView>
+          <View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {topics.map((topic: string, idx: number) => (
+                <View key={idx} style={styles.topicTag}>
+                  <Text style={styles.topicText}>{topic}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
         </View>
 
         {/* 备注信息 */}

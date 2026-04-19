@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -14,8 +14,8 @@ interface PlatformOption {
 }
 
 const platforms: PlatformOption[] = [
-  { platform: 'douyin', displayName: '抖音', icon: '📱' },
-  { platform: 'xiaohongshu', displayName: '小红书', icon: '📕' },
+  { platform: 'douyin', displayName: '抖音', icon: '💙' },
+  { platform: 'xiaohongshu', displayName: '小红书', icon: '💖' },
   { platform: 'zhihu', displayName: '知乎', icon: '💡' },
   { platform: 'toutiao', displayName: '今日头条', icon: '📰' },
 ];
@@ -119,16 +119,13 @@ export default function PromotionAdvice() {
           <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             发布链接 *
           </Text>
-          <View className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4">
-            <Text
-              className="text-base text-gray-900 dark:text-white"
-              placeholder="输入发布链接"
-              value={publishUrl}
-              onChangeText={setPublishUrl}
-            >
-              {publishUrl || '请输入发布链接'}
-            </Text>
-          </View>
+          <TextInput
+            className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 text-base text-gray-900 dark:text-white"
+            placeholder="输入发布链接"
+            placeholderTextColor="#9CA3AF"
+            value={publishUrl}
+            onChangeText={setPublishUrl}
+          />
           <Text className="text-xs text-gray-400 mt-2">
             示例：https://www.douyin.com/video/123456789
           </Text>
@@ -142,7 +139,6 @@ export default function PromotionAdvice() {
           <TouchableOpacity
             className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4"
             onPress={() => {
-              // TODO: 添加日期选择器
               alert('请手动输入日期（YYYY-MM-DD）');
             }}
           >
