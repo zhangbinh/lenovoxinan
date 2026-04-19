@@ -8,15 +8,29 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     const { platform = 'all', timeRange = '7d', category = 'all' } = req.query;
 
-    // 模拟热榜数据
+    // 生成基于当前日期的热榜数据
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = currentDate.getDate();
+
+    // 生成最近15天的日期
+    const generateDate = (daysAgo: number) => {
+      const date = new Date(currentDate);
+      date.setDate(date.getDate() - daysAgo);
+      const d = date.getDate();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      return `${year}-${m}-${String(d).padStart(2, '0')}`;
+    };
+
     const mockTopics = [
       {
         id: '1',
-        title: '2024年最值得入手的高性能游戏本推荐',
+        title: '最值得入手的高性能游戏本推荐',
         platform: '抖音',
         category: '3c',
         hot: 98500,
-        date: '2024-01-15'
+        date: generateDate(0)
       },
       {
         id: '2',
@@ -24,7 +38,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '知乎',
         category: '3c',
         hot: 87200,
-        date: '2024-01-14'
+        date: generateDate(1)
       },
       {
         id: '3',
@@ -32,7 +46,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '小红书',
         category: '3c',
         hot: 75600,
-        date: '2024-01-13'
+        date: generateDate(2)
       },
       {
         id: '4',
@@ -40,7 +54,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '今日头条',
         category: '3c',
         hot: 68900,
-        date: '2024-01-12'
+        date: generateDate(3)
       },
       {
         id: '5',
@@ -48,7 +62,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '知乎',
         category: '3c',
         hot: 54300,
-        date: '2024-01-11'
+        date: generateDate(4)
       },
       {
         id: '6',
@@ -56,7 +70,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '小红书',
         category: '3c',
         hot: 48200,
-        date: '2024-01-10'
+        date: generateDate(5)
       },
       {
         id: '7',
@@ -64,15 +78,15 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '抖音',
         category: '3c',
         hot: 42100,
-        date: '2024-01-09'
+        date: generateDate(6)
       },
       {
         id: '8',
-        title: '2024年显卡升级指南，老笔记本也能焕发新生',
+        title: '显卡升级指南，老笔记本也能焕发新生',
         platform: '知乎',
         category: '3c',
         hot: 38500,
-        date: '2024-01-08'
+        date: generateDate(7)
       },
       {
         id: '9',
@@ -80,7 +94,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '今日头条',
         category: '3c',
         hot: 32800,
-        date: '2024-01-07'
+        date: generateDate(8)
       },
       {
         id: '10',
@@ -88,7 +102,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '小红书',
         category: '3c',
         hot: 29600,
-        date: '2024-01-06'
+        date: generateDate(9)
       },
       {
         id: '11',
@@ -96,7 +110,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '抖音',
         category: '3c',
         hot: 25400,
-        date: '2024-01-05'
+        date: generateDate(10)
       },
       {
         id: '12',
@@ -104,7 +118,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '知乎',
         category: '3c',
         hot: 21900,
-        date: '2024-01-04'
+        date: generateDate(11)
       },
       {
         id: '13',
@@ -112,7 +126,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '今日头条',
         category: '3c',
         hot: 18700,
-        date: '2024-01-03'
+        date: generateDate(12)
       },
       {
         id: '14',
@@ -120,7 +134,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '小红书',
         category: '3c',
         hot: 15800,
-        date: '2024-01-02'
+        date: generateDate(13)
       },
       {
         id: '15',
@@ -128,7 +142,7 @@ router.get('/', async (req: Request, res: Response) => {
         platform: '抖音',
         category: '3c',
         hot: 12900,
-        date: '2024-01-01'
+        date: generateDate(14)
       }
     ];
 
