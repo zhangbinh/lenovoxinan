@@ -494,34 +494,60 @@ export default function PromotionAdviceV3() {
                   </Text>
                 </View>
 
-                {/* 小红书加热策略表格 */}
-                <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 20, marginBottom: 12 }}>加热策略参考</Text>
-                <View style={styles.strategyTable}>
-                  <View style={styles.tableHeader}>
-                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
-                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
-                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
-                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
-                  </View>
-                  <View style={styles.tableRow}>
-                    <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 2.5%</Text>
-                    <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 加热</Text>
-                    <Text style={[styles.tableCell, styles.tableHighlight]}>薯条加热</Text>
-                    <Text style={[styles.tableCell, styles.tableHighlight]}>50-150元</Text>
-                  </View>
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>1%~2.5%</Text>
-                    <Text style={styles.tableCell}>⚠️ 测试</Text>
-                    <Text style={styles.tableCell}>薯条低预算</Text>
-                    <Text style={styles.tableCell}>30-80元</Text>
-                  </View>
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>{"\u003c"} 1%</Text>
-                    <Text style={styles.tableCell}>❌ 不加热</Text>
-                    <Text style={styles.tableCell}>—</Text>
-                    <Text style={styles.tableCell}>—</Text>
-                  </View>
-                </View>
+                {/* 小红书到店转化建议 */}
+                {advice.xiaohongshu.offlineConversion && (
+                  <>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 24, marginBottom: 12 }}>到店转化建议</Text>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#ECFDF5', borderLeftColor: '#059669' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="lightbulb" size={16} color="#059669" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#059669' }]}>转化策略</Text>
+                      </View>
+                      {advice.xiaohongshu.offlineConversion.strategies.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#EEF2FF', borderLeftColor: '#6366F1' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="tag" size={16} color="#6366F1" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#6366F1' }]}>优惠活动设计</Text>
+                      </View>
+                      {advice.xiaohongshu.offlineConversion.offerDesign.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#FEF3C7', borderLeftColor: '#F59E0B' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="location-dot" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#F59E0B' }]}>POI挂载提醒</Text>
+                      </View>
+                      {advice.xiaohongshu.offlineConversion.poiReminders.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#F0FDFA', borderLeftColor: '#14B8A6' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="circle-check" size={16} color="#14B8A6" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#14B8A6' }]}>到店核销机制</Text>
+                      </View>
+                      {advice.xiaohongshu.offlineConversion.verification.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+                  </>
+                )}
               </View>
 
               {/* 抖音加热建议 */}
@@ -573,33 +599,88 @@ export default function PromotionAdviceV3() {
                   </View>
                   <View style={styles.tableRow}>
                     <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 3% 且点赞{"\u003e"}100</Text>
-                    <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 规模化</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>规模化</Text>
                     <Text style={[styles.tableCell, styles.tableHighlight]}>巨量本地推</Text>
                     <Text style={[styles.tableCell, styles.tableHighlight]}>100-300元/天</Text>
                     <Text style={[styles.tableCell, styles.tableHighlight]}>引流到店</Text>
                   </View>
                   <View style={styles.tableRow}>
                     <Text style={styles.tableCell}>1.5%~3%</Text>
-                    <Text style={styles.tableCell}>⚠️ DOU+测试</Text>
+                    <Text style={styles.tableCell}>DOU+测试</Text>
                     <Text style={styles.tableCell}>DOU+</Text>
                     <Text style={styles.tableCell}>50-100元</Text>
                     <Text style={styles.tableCell}>提升互动</Text>
                   </View>
                   <View style={styles.tableRow}>
                     <Text style={styles.tableCell}>0.8%~1.5%</Text>
-                    <Text style={styles.tableCell}>⚠️ 低预算</Text>
+                    <Text style={styles.tableCell}>低预算</Text>
                     <Text style={styles.tableCell}>DOU+低预算</Text>
                     <Text style={styles.tableCell}>30-50元</Text>
                     <Text style={styles.tableCell}>测试潜力</Text>
                   </View>
                   <View style={styles.tableRow}>
                     <Text style={styles.tableCell}>{"\u003c"} 0.8%</Text>
-                    <Text style={styles.tableCell}>❌ 不加热</Text>
+                    <Text style={styles.tableCell}>不加热</Text>
                     <Text style={styles.tableCell}>—</Text>
                     <Text style={styles.tableCell}>—</Text>
                     <Text style={styles.tableCell}>—</Text>
                   </View>
                 </View>
+
+                {/* 抖音到店转化建议 */}
+                {advice.douyin.offlineConversion && (
+                  <>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 24, marginBottom: 12 }}>到店转化建议</Text>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#ECFDF5', borderLeftColor: '#059669' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="lightbulb" size={16} color="#059669" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#059669' }]}>转化策略</Text>
+                      </View>
+                      {advice.douyin.offlineConversion.strategies.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#EEF2FF', borderLeftColor: '#6366F1' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="tag" size={16} color="#6366F1" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#6366F1' }]}>优惠活动设计</Text>
+                      </View>
+                      {advice.douyin.offlineConversion.offerDesign.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#FEF3C7', borderLeftColor: '#F59E0B' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="location-dot" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#F59E0B' }]}>POI挂载提醒</Text>
+                      </View>
+                      {advice.douyin.offlineConversion.poiReminders.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+
+                    <View style={[styles.recommendationCard, { backgroundColor: '#F0FDFA', borderLeftColor: '#14B8A6' }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <FontAwesome6 name="circle-check" size={16} color="#14B8A6" style={{ marginRight: 6 }} />
+                        <Text style={[styles.recommendationTitle, { color: '#14B8A6' }]}>到店核销机制</Text>
+                      </View>
+                      {advice.douyin.offlineConversion.verification.map((item: string, index: number) => (
+                        <Text key={index} style={[styles.recommendationText, { marginBottom: 4 }]}>
+                          • {item}
+                        </Text>
+                      ))}
+                    </View>
+                  </>
+                )}
               </View>
             </>
           )}

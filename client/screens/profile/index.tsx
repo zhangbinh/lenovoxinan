@@ -128,6 +128,26 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.functionSection}>
+          <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/operations-assistant')}>
+            <View style={[styles.functionIcon, { backgroundColor: '#ECFDF5' }]}>
+              <FontAwesome6 name="list-check" size={24} color="#059669" />
+            </View>
+            <View style={styles.functionText}>
+              <Text style={styles.functionTitle}>运营助手</Text>
+              <Text style={styles.functionDesc}>每日任务与周度复盘</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/content-templates')}>
+            <View style={[styles.functionIcon, { backgroundColor: '#EEF2FF' }]}>
+              <FontAwesome6 name="file-lines" size={24} color="#6366F1" />
+            </View>
+            <View style={styles.functionText}>
+              <Text style={styles.functionTitle}>爆款文案模板库</Text>
+              <Text style={styles.functionDesc}>精选高转化文案模板</Text>
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/promotion-advice')}>
             <View style={styles.functionIcon}>
               <FontAwesome6 name="lightbulb" size={24} color="#F59E0B" />

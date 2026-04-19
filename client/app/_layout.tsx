@@ -53,6 +53,8 @@ function RootNavigation() {
       <Stack.Screen name="(tabs)" options={{ title: "" }} />
       <Stack.Screen name="content-display" options={{ title: "" }} />
       <Stack.Screen name="promotion-advice" options={{ title: "" }} />
+      <Stack.Screen name="operations-assistant" options={{ title: "" }} />
+      <Stack.Screen name="content-templates" options={{ title: "" }} />
     </Stack>
   );
 }
