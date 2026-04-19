@@ -14,6 +14,16 @@ export const styles = StyleSheet.create({
   inputSection: {
     marginBottom: 24,
   },
+  coverContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  coverImage: {
+    width: 280,
+    height: 200,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
   sectionTitle: {
     fontSize: 28,
     fontWeight: '800',

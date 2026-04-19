@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Modal, Platform, ImageBackground } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+const coverImage = require('@/assets/lenovo_app_ui.webp');
 
 type PlatformType = 'douyin' | 'xiaohongshu';
 
@@ -43,6 +45,16 @@ const styles = {
     fontSize: 14,
     color: '#6B7280',
     marginBottom: 24,
+  } as const,
+  coverContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  } as const,
+  coverImage: {
+    width: 280,
+    height: 200,
+    borderRadius: 16,
+    overflow: 'hidden',
   } as const,
   sectionLabel: {
     fontSize: 14,
@@ -251,6 +263,15 @@ export default function PromotionAdviceV3() {
     <Screen>
       <ScrollView style={styles.container}>
         <View style={{ padding: 24 }}>
+          {/* 封面图片 */}
+          <View style={styles.coverContainer}>
+            <ImageBackground
+              source={coverImage}
+              style={styles.coverImage}
+              resizeMode="cover"
+            />
+          </View>
+
           {/* 标题 */}
           <Text style={styles.title}>智能投流分析</Text>
           <Text style={styles.subtitle}>基于AI算法的专业投流建议与数据分析</Text>

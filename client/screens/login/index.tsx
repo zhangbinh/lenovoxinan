@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { styles } from './styles';
+
+const coverImage = require('@/assets/lenovo_app_ui.webp');
 
 export default function LoginScreen() {
   const [storeId, setStoreId] = useState('');
@@ -50,16 +52,29 @@ export default function LoginScreen() {
 
   return (
     <Screen>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          {/* Logo 区域 */}
-          <View style={styles.logoContainer}>
-            <View style={styles.logo}>
-              <Text style={styles.logoText}>联想</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.container}>
+          <View style={styles.content}>
+            {/* 封面图片 */}
+            <View style={styles.coverContainer}>
+              <ImageBackground
+                source={coverImage}
+                style={styles.coverImage}
+                resizeMode="contain"
+              />
             </View>
-            <Text style={styles.title}>西南战区门店营销内容辅助平台</Text>
-            <Text style={styles.subtitle}>Lenovo Southwest Region Marketing Assistant</Text>
-          </View>
+
+            {/* Logo 区域 */}
+            <View style={styles.logoContainer}>
+              <View style={styles.logo}>
+                <Text style={styles.logoText}>联想</Text>
+              </View>
+              <Text style={styles.title}>西南战区门店营销内容辅助平台</Text>
+              <Text style={styles.subtitle}>Lenovo Southwest Region Marketing Assistant</Text>
+            </View>
 
           {/* 输入区域 */}
           <View style={styles.inputContainer}>
@@ -124,6 +139,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       </View>
+    </KeyboardAvoidingView>
     </Screen>
   );
 }

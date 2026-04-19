@@ -10,6 +10,14 @@ export const styles = StyleSheet.create({
   content: {
     width: '100%',
   },
+  coverContainer: {
+    marginBottom: 32,
+    alignItems: 'center',
+  },
+  coverImage: {
+    width: 280,
+    height: 200,
+  },
   logoContainer: {
     alignItems: 'center',
     marginBottom: 60,
