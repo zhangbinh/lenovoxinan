@@ -187,13 +187,35 @@ const styles = {
     fontStyle: 'italic',
     marginTop: 8,
   } as const,
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  } as const,
+  metricCard: {
+    width: '48%',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    alignItems: 'center' as const,
+  } as const,
+  metricValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#6C63FF',
+    marginBottom: 4,
+  } as const,
+  metricLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+  } as const,
 };
 
 export default function PromotionAdviceV3() {
   const router = useSafeRouter();
   const params = useSafeSearchParams<{ publishUrl?: string; publishDate?: string }>();
   const { storeId } = useAuth();
-  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType | null>(null);
   const [publishUrl, setPublishUrl] = useState(params.publishUrl || '');
   const [publishDate, setPublishDate] = useState(params.publishDate || new Date().toISOString().split('T')[0]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -230,11 +252,8 @@ export default function PromotionAdviceV3() {
   }, [storeId]);
 
   React.useEffect(() => {
-    if (params.publishUrl && params.publishDate) {
-      setSelectedPlatform(null);
-    }
     fetchPublishedContents();
-  }, [params.publishUrl, params.publishDate, fetchPublishedContents]);
+  }, [fetchPublishedContents]);
 
   const handleDateChange = (date: Date) => {
     setTempDate(date.toISOString().split('T')[0]);
@@ -247,13 +266,12 @@ export default function PromotionAdviceV3() {
 
   const handleContentSelect = (content: PublishedContent) => {
     setSelectedContent(content);
-    setSelectedPlatform(content.platform);
     setPublishUrl(content.link);
     setPublishDate(content.publishDate);
   };
 
   const handleSubmit = async () => {
-    if (!selectedPlatform || !publishUrl || !publishDate) {
+    if (!publishUrl || !publishDate) {
       alert('请填写所有必填项');
       return;
     }
@@ -265,14 +283,13 @@ export default function PromotionAdviceV3() {
       /**
        * 服务端文件：server/src/routes/promotion.ts
        * 接口：POST /api/v1/promotion/advice
-       * Body 参数：publishUrl: string, platform: string, publishDate: string
+       * Body 参数：publishUrl: string, publishDate: string
        */
       const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           publishUrl,
-          platform: selectedPlatform,
           publishDate,
         }),
       });
@@ -282,10 +299,10 @@ export default function PromotionAdviceV3() {
       if (result.success) {
         setAdvice(result.data);
       } else {
-        alert(result.message || '获取投流建议失败');
+        alert(result.message || '获取内容运营建议失败');
       }
     } catch (error) {
-      console.error('获取投流建议失败:', error);
+      console.error('获取内容运营建议失败:', error);
       alert('网络错误，请重试');
     } finally {
       setLoading(false);
@@ -297,8 +314,8 @@ export default function PromotionAdviceV3() {
       <ScrollView style={styles.container}>
         <View style={{ padding: 24 }}>
           {/* 标题 */}
-          <Text style={styles.title}>智能投流分析</Text>
-          <Text style={styles.subtitle}>基于AI算法的专业投流建议与数据分析</Text>
+          <Text style={styles.title}>内容运营建议</Text>
+          <Text style={styles.subtitle}>基于数据的小红书和抖音双平台加热策略分析</Text>
 
           {/* 已发布内容列表 */}
           {publishedContents.length > 0 && (
@@ -373,49 +390,6 @@ export default function PromotionAdviceV3() {
             </Text>
           </TouchableOpacity>
 
-          {/* 平台选择 */}
-          {!selectedContent && (
-            <>
-              <Text style={styles.sectionLabel}>选择发布平台 *</Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 24 }}>
-                {platforms.map((item) => (
-                  <TouchableOpacity
-                    key={item.platform}
-                    onPress={() => setSelectedPlatform(item.platform)}
-                    style={{
-                      flex: 1,
-                      minWidth: 140,
-                      padding: 16,
-                      borderRadius: 16,
-                      borderWidth: 2,
-                      alignItems: 'center' as const,
-                      marginRight: 12,
-                      marginBottom: 12,
-                      backgroundColor: selectedPlatform === item.platform ? 'rgba(108, 99, 255, 0.05)' : '#FFFFFF',
-                      borderColor: selectedPlatform === item.platform ? '#6C63FF' : '#E5E7EB',
-                    }}
-                  >
-                    <FontAwesome6
-                      name={item.icon as any}
-                      size={24}
-                      color={selectedPlatform === item.platform ? '#6C63FF' : '#6B7280'}
-                      style={{ marginBottom: 8 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: '600',
-                        color: selectedPlatform === item.platform ? '#6C63FF' : '#6B7280',
-                      }}
-                    >
-                      {item.displayName}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </>
-          )}
-
           {/* 发布链接 */}
           <Text style={styles.sectionLabel}>发布链接 *</Text>
           <View style={styles.inputContainer}>
@@ -460,9 +434,35 @@ export default function PromotionAdviceV3() {
           {/* 分析结果 */}
           {advice && (
             <>
-              {/* 投流建议 */}
+              {/* 数据概览 */}
               <View style={styles.resultCard}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 16 }}>投流建议</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 16 }}>数据概览</Text>
+                <View style={styles.metricsGrid}>
+                  <View style={styles.metricCard}>
+                    <Text style={styles.metricValue}>{advice.metrics.views.toLocaleString()}</Text>
+                    <Text style={styles.metricLabel}>播放/阅读量</Text>
+                  </View>
+                  <View style={styles.metricCard}>
+                    <Text style={styles.metricValue}>{advice.metrics.likes.toLocaleString()}</Text>
+                    <Text style={styles.metricLabel}>点赞数</Text>
+                  </View>
+                  <View style={styles.metricCard}>
+                    <Text style={styles.metricValue}>{advice.metrics.comments.toLocaleString()}</Text>
+                    <Text style={styles.metricLabel}>评论数</Text>
+                  </View>
+                  <View style={styles.metricCard}>
+                    <Text style={styles.metricValue}>{advice.metrics.shares.toLocaleString()}</Text>
+                    <Text style={styles.metricLabel}>分享数</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* 小红书加热建议 */}
+              <View style={styles.resultCard}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                  <FontAwesome6 name="heart" size={24} color="#FF2442" style={{ marginRight: 8 }} />
+                  <Text style={{ fontSize: 18, fontWeight: 'bold' }}>小红书加热建议</Text>
+                </View>
 
                 <View style={styles.recommendationCard}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -470,33 +470,19 @@ export default function PromotionAdviceV3() {
                     <Text style={styles.recommendationTitle}>投流决策</Text>
                   </View>
                   <Text style={styles.recommendationText}>
-                    {advice.recommendation.decision}
+                    {advice.xiaohongshu.recommendation.decision}
                   </Text>
                 </View>
 
-                {advice.platform === 'douyin' && (
-                  <View style={styles.recommendationCard}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                      <FontAwesome6 name="bullhorn" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
-                      <Text style={styles.recommendationTitle}>投流工具选择</Text>
-                    </View>
-                    <Text style={styles.recommendationText}>
-                      {advice.recommendation.tool}
-                    </Text>
+                <View style={styles.recommendationCard}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <FontAwesome6 name="location-dot" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                    <Text style={styles.recommendationTitle}>投流范围</Text>
                   </View>
-                )}
-
-                {advice.platform === 'xiaohongshu' && (
-                  <View style={styles.recommendationCard}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                      <FontAwesome6 name="location-dot" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
-                      <Text style={styles.recommendationTitle}>投流范围</Text>
-                    </View>
-                    <Text style={styles.recommendationText}>
-                      {advice.recommendation.scope}
-                    </Text>
-                  </View>
-                )}
+                  <Text style={styles.recommendationText}>
+                    {advice.xiaohongshu.recommendation.scope}
+                  </Text>
+                </View>
 
                 <View style={styles.recommendationCard}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -504,113 +490,117 @@ export default function PromotionAdviceV3() {
                     <Text style={styles.recommendationTitle}>注意事项</Text>
                   </View>
                   <Text style={styles.recommendationText}>
-                    {advice.recommendation.notice}
+                    {advice.xiaohongshu.recommendation.notice}
                   </Text>
                 </View>
-              </View>
 
-              {/* 加热策略表格 */}
-              <View style={styles.resultCard}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 16 }}>加热策略参考</Text>
-
-                {advice.platform === 'xiaohongshu' && (
-                  <View style={styles.strategyTable}>
-                    {/* 表头 */}
-                    <View style={styles.tableHeader}>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
-                    </View>
-
-                    {/* 表格行 */}
-                    <View style={styles.tableRow}>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 2.5%</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 加热</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>薯条加热</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>50-150元</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                      <Text style={styles.tableCell}>1%~2.5%</Text>
-                      <Text style={styles.tableCell}>⚠️ 测试</Text>
-                      <Text style={styles.tableCell}>薯条低预算</Text>
-                      <Text style={styles.tableCell}>30-80元</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                      <Text style={styles.tableCell}>{"\u003c"} 1%</Text>
-                      <Text style={styles.tableCell}>❌ 不加热</Text>
-                      <Text style={styles.tableCell}>—</Text>
-                      <Text style={styles.tableCell}>—</Text>
-                    </View>
+                {/* 小红书加热策略表格 */}
+                <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 20, marginBottom: 12 }}>加热策略参考</Text>
+                <View style={styles.strategyTable}>
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
                   </View>
-                )}
-
-                {advice.platform === 'douyin' && (
-                  <View style={styles.strategyTable}>
-                    {/* 表头 */}
-                    <View style={styles.tableHeader}>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
-                      <Text style={[styles.tableHeaderText, { flex: 1.5 }]}>目的</Text>
-                    </View>
-
-                    {/* 表格行 */}
-                    <View style={styles.tableRow}>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 3% 且点赞{"\u003e"}100</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 规模化</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>巨量本地推</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>100-300元/天</Text>
-                      <Text style={[styles.tableCell, styles.tableHighlight]}>引流到店</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                      <Text style={styles.tableCell}>1.5%~3%</Text>
-                      <Text style={styles.tableCell}>⚠️ DOU+测试</Text>
-                      <Text style={styles.tableCell}>DOU+</Text>
-                      <Text style={styles.tableCell}>50-100元</Text>
-                      <Text style={styles.tableCell}>提升互动</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                      <Text style={styles.tableCell}>0.8%~1.5%</Text>
-                      <Text style={styles.tableCell}>⚠️ 低预算</Text>
-                      <Text style={styles.tableCell}>DOU+低预算</Text>
-                      <Text style={styles.tableCell}>30-50元</Text>
-                      <Text style={styles.tableCell}>测试潜力</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                      <Text style={styles.tableCell}>{"\u003c"} 0.8%</Text>
-                      <Text style={styles.tableCell}>❌ 不加热</Text>
-                      <Text style={styles.tableCell}>—</Text>
-                      <Text style={styles.tableCell}>—</Text>
-                      <Text style={styles.tableCell}>—</Text>
-                    </View>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 2.5%</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 加热</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>薯条加热</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>50-150元</Text>
                   </View>
-                )}
-
-                <Text style={styles.strategyHint}>
-                  💡 提示：根据您内容的实际互动率，参考上方策略决定是否加热
-                </Text>
-              </View>
-
-              {/* 优化建议 */}
-              <View style={styles.resultCard}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>优化建议</Text>
-                {advice.advice && advice.advice.map((item: string, index: number) => (
-                  <View key={index} style={{ flexDirection: 'row', marginBottom: 12, alignItems: 'flex-start' }}>
-                    <FontAwesome6 name="lightbulb" size={16} color="#F59E0B" style={{ marginRight: 10, marginTop: 2 }} />
-                    <Text style={{ fontSize: 14, color: '#374151', flex: 1, lineHeight: 20 }}>{item}</Text>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>1%~2.5%</Text>
+                    <Text style={styles.tableCell}>⚠️ 测试</Text>
+                    <Text style={styles.tableCell}>薯条低预算</Text>
+                    <Text style={styles.tableCell}>30-80元</Text>
                   </View>
-                ))}
-              </View>
-
-              {/* 预算建议 */}
-              {advice.budget && (
-                <View style={styles.resultCard}>
-                  <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>投流预算建议</Text>
-                  <Text style={{ fontSize: 14, color: '#374151', lineHeight: 20 }}>{advice.budget}</Text>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>{"\u003c"} 1%</Text>
+                    <Text style={styles.tableCell}>❌ 不加热</Text>
+                    <Text style={styles.tableCell}>—</Text>
+                    <Text style={styles.tableCell}>—</Text>
+                  </View>
                 </View>
-              )}
+              </View>
+
+              {/* 抖音加热建议 */}
+              <View style={styles.resultCard}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                  <FontAwesome6 name="music" size={24} color="#000000" style={{ marginRight: 8 }} />
+                  <Text style={{ fontSize: 18, fontWeight: 'bold' }}>抖音加热建议</Text>
+                </View>
+
+                <View style={styles.recommendationCard}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <FontAwesome6 name="money-bill-wave" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                    <Text style={styles.recommendationTitle}>投流决策</Text>
+                  </View>
+                  <Text style={styles.recommendationText}>
+                    {advice.douyin.recommendation.decision}
+                  </Text>
+                </View>
+
+                <View style={styles.recommendationCard}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <FontAwesome6 name="bullhorn" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                    <Text style={styles.recommendationTitle}>投流工具选择</Text>
+                  </View>
+                  <Text style={styles.recommendationText}>
+                    {advice.douyin.recommendation.tool}
+                  </Text>
+                </View>
+
+                <View style={styles.recommendationCard}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <FontAwesome6 name="triangle-exclamation" size={16} color="#F59E0B" style={{ marginRight: 6 }} />
+                    <Text style={styles.recommendationTitle}>注意事项</Text>
+                  </View>
+                  <Text style={styles.recommendationText}>
+                    {advice.douyin.recommendation.notice}
+                  </Text>
+                </View>
+
+                {/* 抖音加热策略表格 */}
+                <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 20, marginBottom: 12 }}>加热策略参考</Text>
+                <View style={styles.strategyTable}>
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>互动率</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>建议</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>方式</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1 }]}>预算</Text>
+                    <Text style={[styles.tableHeaderText, { flex: 1.5 }]}>目的</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>{"\u003e"} 3% 且点赞{"\u003e"}100</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>✅ 规模化</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>巨量本地推</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>100-300元/天</Text>
+                    <Text style={[styles.tableCell, styles.tableHighlight]}>引流到店</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>1.5%~3%</Text>
+                    <Text style={styles.tableCell}>⚠️ DOU+测试</Text>
+                    <Text style={styles.tableCell}>DOU+</Text>
+                    <Text style={styles.tableCell}>50-100元</Text>
+                    <Text style={styles.tableCell}>提升互动</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>0.8%~1.5%</Text>
+                    <Text style={styles.tableCell}>⚠️ 低预算</Text>
+                    <Text style={styles.tableCell}>DOU+低预算</Text>
+                    <Text style={styles.tableCell}>30-50元</Text>
+                    <Text style={styles.tableCell}>测试潜力</Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={styles.tableCell}>{"\u003c"} 0.8%</Text>
+                    <Text style={styles.tableCell}>❌ 不加热</Text>
+                    <Text style={styles.tableCell}>—</Text>
+                    <Text style={styles.tableCell}>—</Text>
+                    <Text style={styles.tableCell}>—</Text>
+                  </View>
+                </View>
+              </View>
             </>
           )}
         </View>

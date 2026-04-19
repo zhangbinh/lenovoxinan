@@ -12,15 +12,15 @@ import {
 
 const router = express.Router();
 
-// 从发布链接抓取数据并生成投流建议
+// 从发布链接抓取数据并生成内容运营建议
 router.post('/advice', async (req: Request, res: Response) => {
   try {
     const { publishUrl, platform, publishDate } = req.body;
 
-    if (!publishUrl || !platform || !publishDate) {
+    if (!publishUrl || !publishDate) {
       res.status(400).json({
         success: false,
-        message: '缺少必要参数: publishUrl, platform, publishDate',
+        message: '缺少必要参数: publishUrl, publishDate',
       });
       return;
     }
@@ -67,8 +67,6 @@ router.post('/advice', async (req: Request, res: Response) => {
       const response = await client.fetch(publishUrl);
 
       // 从抓取的内容中提取数据
-      // 注意：实际应用中需要根据不同平台的数据结构进行解析
-      // 这里简化处理，使用模拟数据
       console.log('抓取成功:', response.title);
 
       // 根据抓取的内容长度估算播放量/阅读量
@@ -104,27 +102,32 @@ router.post('/advice', async (req: Request, res: Response) => {
       };
     }
 
-    // 生成投流建议
-    const advice = generateAdvice(platform, daysSincePublish, metrics);
+    // 生成小红书和抖音两个平台的建议
+    const xiaohongshuAdvice = generateAdvice('xiaohongshu', daysSincePublish, metrics);
+    const douyinAdvice = generateAdvice('douyin', daysSincePublish, metrics);
 
     res.json({
       success: true,
       data: {
-        ...advice,
         daysSincePublish,
         metrics: {
           views: metrics.views,
           likes: metrics.likes,
           comments: metrics.comments,
           shares: metrics.shares,
+          interactRate: metrics.interactRate,
+          collectRate: metrics.collectRate,
+          completionRate: metrics.completionRate,
         },
+        xiaohongshu: xiaohongshuAdvice,
+        douyin: douyinAdvice,
       },
     });
   } catch (error) {
-    console.error('投流建议生成失败:', error);
+    console.error('内容运营建议生成失败:', error);
     res.status(500).json({
       success: false,
-      message: '投流建议生成失败',
+      message: '内容运营建议生成失败',
     });
   }
 });
