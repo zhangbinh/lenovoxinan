@@ -151,10 +151,15 @@ export default function ContentDisplayScreen() {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => {
+              Alert.alert('确认返回', '确定要返回主页面吗？未保存的内容将会丢失。', [
+                { text: '取消', style: 'cancel' },
+                { text: '确定', style: 'destructive', onPress: () => router.back() },
+              ]);
+            }}
             activeOpacity={0.8}
           >
-            <Text style={styles.backButtonText}>← 返回</Text>
+            <Text style={styles.backButtonText}>确认返回</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{contentType === 'xiaohongshu' ? '小红书文案' : '短视频脚本'}</Text>
           <View style={styles.placeholder} />
