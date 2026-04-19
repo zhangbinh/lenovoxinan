@@ -102,6 +102,27 @@ export const styles = StyleSheet.create({
     elevation: 6,
     zIndex: 1,
   },
+  contentItemSubmitted: {
+    backgroundColor: '#E8F5E9',
+    borderColor: '#4CAF50',
+  },
+  submittedBadge: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 9999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  submittedBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  submittedHint: {
+    fontSize: 11,
+    color: '#4CAF50',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
   contentItemHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -152,6 +173,10 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.6)',
     minHeight: 44,
+  },
+  publishInputSubmitted: {
+    backgroundColor: '#F1F8E9',
+    color: '#2E7D32',
   },
   footer: {
     flexDirection: 'row',

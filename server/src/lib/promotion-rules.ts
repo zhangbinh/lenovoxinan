@@ -8,6 +8,14 @@ export interface PlatformRule {
   targeting: string[];
   budget: string;
   tips: string[];
+  recommendation: Recommendation;
+}
+
+export interface Recommendation {
+  decision: string;
+  tool?: string;
+  scope?: string;
+  notice: string;
 }
 
 export interface Rule {
@@ -61,6 +69,11 @@ export const platformRules: Record<string, PlatformRule> = {
       '投流时长建议12-24小时，避免浪费',
       '测试不同封面，选择点击率高的版本',
     ],
+    recommendation: {
+      decision: '如果视频在发布后6小时内播放量突破5000且完播率超过30%，建议立即开启投流。如果24小时后播放量仍低于1000，建议放弃投流，优化内容后重新发布。',
+      tool: '播放量 < 5000 时使用 DOU+；播放量 > 5000 时使用巨量引擎。DOU+适合快速测试，巨量引擎适合规模化投放。',
+      notice: '注意观察投流前3小时的数据，如果ROI低于0.5，及时停止。避免在凌晨2-6点投流，该时段效果最差。',
+    },
   },
   xiaohongshu: {
     platform: 'xiaohongshu',
@@ -106,6 +119,11 @@ export const platformRules: Record<string, PlatformRule> = {
       '投流时长建议24-48小时，小红书长尾效应强',
       '优质笔记可以获得平台推荐，减少投流依赖',
     ],
+    recommendation: {
+      decision: '如果笔记发布后24小时内曝光量超过3000且点赞率超过10%，建议开启薯条推广。如果48小时后曝光量仍低于500，不建议投流，需要优化内容或重新发布。',
+      scope: '优先投本地同城流量，成本更低且转化率更高。如果产品适合全国推广，再考虑投全国流量。本地推广适合线下门店转化，全国推广适合线上带货。',
+      notice: '小红书投流重点是"种草"而非"销售"，不要直接硬广。关注笔记的收藏和评论数据，这些是转化的关键指标。',
+    },
   },
   zhihu: {
     platform: 'zhihu',
@@ -210,6 +228,8 @@ export function generateAdvice(
   timing: string[];
   targeting: string[];
   tips: string[];
+  platform: string;
+  recommendation: Recommendation;
 } {
   const rule = platformRules[platform];
   if (!rule) {
@@ -220,6 +240,11 @@ export function generateAdvice(
       timing: [],
       targeting: [],
       tips: [],
+      platform,
+      recommendation: {
+        decision: '暂不支持该平台的投流建议',
+        notice: '请联系技术团队添加该平台支持',
+      },
     };
   }
 
@@ -254,5 +279,7 @@ export function generateAdvice(
     timing: rule.timing,
     targeting: rule.targeting,
     tips: rule.tips,
+    platform,
+    recommendation: rule.recommendation,
   };
 }

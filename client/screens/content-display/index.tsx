@@ -27,6 +27,8 @@ export default function ContentDisplayScreen() {
   const [contentType] = useState<'xiaohongshu' | 'video'>(params.type || 'xiaohongshu');
   const [topics] = useState(params.topics ? JSON.parse(params.topics) : []);
   const remark = params.remark || '';
+  const [submittedLinks, setSubmittedLinks] = useState<Set<number>>(new Set());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const generateContent = async () => {
     if (topics.length === 0) {
@@ -151,6 +153,8 @@ export default function ContentDisplayScreen() {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       // 调用后端API，保存每条已发布的内容
       const savePromises = itemsWithLinks.map((item: ContentItem) => {
@@ -194,15 +198,24 @@ export default function ContentDisplayScreen() {
       if (failedCount > 0) {
         console.error(`提交失败: ${failedCount}/${itemsWithLinks.length}`);
         Alert.alert('部分失败', `${itemsWithLinks.length - failedCount}条内容提交成功，${failedCount}条内容提交失败，请重试`);
+        setIsSubmitting(false);
         return;
       }
 
-      Alert.alert('提交成功', `已成功提交${itemsWithLinks.length}条内容的发布链接，系统将在每天20点提供投流指导建议！`, [
-        { text: '确定', onPress: () => router.back() }
+      // 更新已提交链接的状态
+      const newSubmittedLinks = new Set(submittedLinks);
+      itemsWithLinks.forEach((item: ContentItem) => {
+        newSubmittedLinks.add(item.index);
+      });
+      setSubmittedLinks(newSubmittedLinks);
+
+      Alert.alert('提交成功', `已成功提交${itemsWithLinks.length}条内容的发布链接！\n\n系统将在每天20点提供投流指导建议，你可以在"投流指导"页面查看。`, [
+        { text: '确定', onPress: () => setIsSubmitting(false) }
       ]);
     } catch (error) {
       console.error('提交发布链接失败:', error);
       Alert.alert('提交失败', '网络错误，请重试');
+      setIsSubmitting(false);
     }
   };
 
@@ -266,33 +279,45 @@ export default function ContentDisplayScreen() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingBottom: 20 }}
         >
-          {generatedContent && generatedContent.items.map((item: ContentItem, idx: number) => (
-            <View key={idx} style={styles.contentItem}>
-              <View style={styles.contentItemHeader}>
-                <View style={styles.contentIndex}>
-                  <Text style={styles.contentIndexText}>{item.index}</Text>
+          {generatedContent && generatedContent.items.map((item: ContentItem, idx: number) => {
+            const isSubmitted = submittedLinks.has(item.index);
+            return (
+              <View key={idx} style={[styles.contentItem, isSubmitted && styles.contentItemSubmitted]}>
+                <View style={styles.contentItemHeader}>
+                  <View style={styles.contentIndex}>
+                    <Text style={styles.contentIndexText}>{item.index}</Text>
+                  </View>
+                  {item.title && (
+                    <Text style={styles.contentItemTitle}>{item.title}</Text>
+                  )}
+                  {isSubmitted && (
+                    <View style={styles.submittedBadge}>
+                      <Text style={styles.submittedBadgeText}>✓ 已提交</Text>
+                    </View>
+                  )}
                 </View>
-                {item.title && (
-                  <Text style={styles.contentItemTitle}>{item.title}</Text>
-                )}
+                <Text style={styles.contentItemText}>{item.text}</Text>
+                <View style={styles.publishSection}>
+                  <Text style={styles.publishLabel}>已发布链接（选填）</Text>
+                  <TextInput
+                    style={[styles.publishInput, isSubmitted && styles.publishInputSubmitted]}
+                    placeholder="请输入发布后的链接（如：小红书/抖音/知乎链接）"
+                    placeholderTextColor="#B2BEC3"
+                    value={item.publishLink}
+                    onChangeText={(text) => handlePublishLinkChange(idx, text)}
+                    keyboardType="url"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    clearButtonMode="while-editing"
+                    editable={!isSubmitted}
+                  />
+                  {isSubmitted && (
+                    <Text style={styles.submittedHint}>该链接已提交，无法修改</Text>
+                  )}
+                </View>
               </View>
-              <Text style={styles.contentItemText}>{item.text}</Text>
-              <View style={styles.publishSection}>
-                <Text style={styles.publishLabel}>已发布链接（选填）</Text>
-                <TextInput
-                  style={styles.publishInput}
-                  placeholder="请输入发布后的链接（如：小红书/抖音/知乎链接）"
-                  placeholderTextColor="#B2BEC3"
-                  value={item.publishLink}
-                  onChangeText={(text) => handlePublishLinkChange(idx, text)}
-                  keyboardType="url"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                />
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </ScrollView>
 
         {/* 底部提交按钮 */}
