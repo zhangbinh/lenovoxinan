@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'reac
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { styles } from './styles';
 
 interface PublishedContent {
@@ -16,6 +17,7 @@ interface PublishedContent {
 
 export default function ProfileScreen() {
   const { storeId, storeName, logout } = useAuth();
+  const router = useSafeRouter();
   const [publishedContents, setPublishedContents] = useState<PublishedContent[]>([
     {
       id: '1',
@@ -29,26 +31,77 @@ export default function ProfileScreen() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newContentLink, setNewContentLink] = useState('');
 
-  const handleAddContent = () => {
+  const handleAddContent = async () => {
     if (!newContentLink.trim()) {
       Alert.alert('提示', '请输入内容链接');
       return;
     }
 
-    const newContent: PublishedContent = {
-      id: Date.now().toString(),
-      title: '新发布内容',
-      platform: '未知',
-      link: newContentLink,
-      publishDate: new Date().toISOString().split('T')[0],
-      adviceCount: 0,
+    try {
+      // 简单判断平台
+      let platform = 'unknown';
+      const url = newContentLink.toLowerCase();
+      if (url.includes('douyin')) {
+        platform = 'douyin';
+      } else if (url.includes('xiaohongshu') || url.includes('xhslink')) {
+        platform = 'xiaohongshu';
+      } else if (url.includes('zhihu')) {
+        platform = 'zhihu';
+      } else if (url.includes('toutiao') || url.includes('toutiaocdn')) {
+        platform = 'toutiao';
+      }
+
+      // 调用后端API添加内容到定时任务监控
+      /**
+       * 服务端文件：server/src/routes/promotion.ts
+       * 接口：POST /api/v1/promotion/content
+       * Body 参数：storeId: string, publishUrl: string, platform: string, publishDate: string
+       */
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/content`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          storeId,
+          publishUrl: newContentLink,
+          platform,
+          publishDate: new Date().toISOString().split('T')[0],
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const newContent: PublishedContent = {
+          id: result.data.contentId,
+          title: '新发布内容',
+          platform: getPlatformDisplayName(platform),
+          link: newContentLink,
+          publishDate: new Date().toISOString().split('T')[0],
+          adviceCount: 0,
+        };
+
+        setPublishedContents([newContent, ...publishedContents]);
+        setNewContentLink('');
+        setShowAddModal(false);
+
+        Alert.alert('成功', result.data.message);
+      } else {
+        Alert.alert('失败', result.message || '添加内容失败');
+      }
+    } catch (error) {
+      console.error('添加内容失败:', error);
+      Alert.alert('失败', '网络错误，请重试');
+    }
+  };
+
+  const getPlatformDisplayName = (platform: string) => {
+    const platformNames: Record<string, string> = {
+      douyin: '抖音',
+      xiaohongshu: '小红书',
+      zhihu: '知乎',
+      toutiao: '今日头条',
     };
-
-    setPublishedContents([newContent, ...publishedContents]);
-    setNewContentLink('');
-    setShowAddModal(false);
-
-    Alert.alert('成功', '内容已添加，系统将从发布日起连续15日提供投流指导');
+    return platformNames[platform] || '未知';
   };
 
   return (
@@ -131,11 +184,11 @@ export default function ProfileScreen() {
                     <TouchableOpacity
                       style={styles.viewAdviceButton}
                       onPress={() => {
-                        if (content.adviceCount > 0) {
-                          Alert.alert('投流建议', '投流建议功能正在开发中，将基于平台投流规则为内容提供优化建议。');
-                        } else {
-                          Alert.alert('等待投流建议', '系统将在内容发布后，从次日起连续15日，每天20点提供投流指导建议。');
-                        }
+                        // 跳转到投流建议页面，传递发布链接和发布日期
+                        router.push('/promotion-advice', {
+                          publishUrl: content.link,
+                          publishDate: content.publishDate,
+                        });
                       }}
                       activeOpacity={0.8}
                     >

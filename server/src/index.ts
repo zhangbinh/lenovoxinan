@@ -4,6 +4,8 @@ import authRouter from "./routes/auth";
 import topicsRouter from "./routes/topics";
 import contentRouter from "./routes/content";
 import hottopicsRouter from "./routes/hottopics";
+import promotionRouter from "./routes/promotion";
+import { startPromotionCronJob } from "./lib/promotion-cron";
 
 const app = express();
 const port = process.env.PORT || 9091;
@@ -18,6 +20,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/topics', topicsRouter);
 app.use('/api/v1/content', contentRouter);
 app.use('/api/v1/hottopics', hottopicsRouter);
+app.use('/api/v1/promotion', promotionRouter);
 
 app.get('/api/v1/health', (req, res) => {
   console.log('Health check success');
@@ -27,4 +30,7 @@ app.get('/api/v1/health', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}/`);
+
+  // 启动投流建议定时任务
+  startPromotionCronJob();
 });
