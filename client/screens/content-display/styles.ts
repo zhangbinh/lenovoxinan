@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -181,19 +181,22 @@ export const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     padding: 24,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 24,
     backgroundColor: '#F0F0F3',
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.05)',
   },
   footerButton: {
     flex: 1,
-    borderRadius: 9999,
+    borderRadius: 16,
     paddingVertical: 14,
     alignItems: 'center',
-    marginHorizontal: 6,
+    minHeight: 48,
+    justifyContent: 'center',
   },
   footerButtonCancel: {
     backgroundColor: '#E8E8EB',
+    marginRight: 12,
   },
   footerButtonTextCancel: {
     fontSize: 15,
@@ -205,6 +208,7 @@ export const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 16,
   },
   footerButtonTextConfirm: {
     fontSize: 15,

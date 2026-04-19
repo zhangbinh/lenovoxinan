@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome6 } from '@expo/vector-icons';
+import * as Updates from 'expo-updates';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
@@ -26,6 +27,8 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newContentLink, setNewContentLink] = useState('');
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   // =============================================
 
   const fetchPublishedContents = useCallback(async () => {
@@ -108,6 +111,61 @@ export default function ProfileScreen() {
     ]);
   };
 
+  // 检查更新
+  const checkForUpdate = useCallback(async () => {
+    setIsCheckingUpdate(true);
+    try {
+      const update = await Updates.checkForUpdateAsync();
+      if (update.isAvailable) {
+        setUpdateAvailable(true);
+        Alert.alert(
+          '发现新版本',
+          '发现新版本更新，是否立即更新？',
+          [
+            { text: '暂不更新', style: 'cancel' },
+            {
+              text: '立即更新',
+              onPress: async () => {
+                try {
+                  await Updates.fetchUpdateAsync();
+                  Alert.alert('更新成功', '应用将自动重启以完成更新', [
+                    {
+                      text: '确定',
+                      onPress: () => Updates.reloadAsync(),
+                    },
+                  ]);
+                } catch (error) {
+                  console.error('更新失败:', error);
+                  Alert.alert('更新失败', '更新过程中出现错误，请重试');
+                }
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert('已是最新版本', '当前应用已是最新版本');
+      }
+    } catch (error) {
+      console.error('检查更新失败:', error);
+      Alert.alert('检查失败', '无法检查更新，请稍后重试');
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  }, []);
+
+  // 页面加载时检查是否有可用更新
+  React.useEffect(() => {
+    const checkUpdateOnMount = async () => {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        setUpdateAvailable(update.isAvailable);
+      } catch (error) {
+        console.error('检查更新失败:', error);
+      }
+    };
+    checkUpdateOnMount();
+  }, []);
+
   return (
     <Screen>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -123,6 +181,40 @@ export default function ProfileScreen() {
                   <Text style={styles.userId}>编号: {storeId}</Text>
                 </View>
               </View>
+
+              {updateAvailable && (
+                <TouchableOpacity
+                  style={styles.updateButton}
+                  onPress={checkForUpdate}
+                  disabled={isCheckingUpdate}
+                >
+                  {isCheckingUpdate ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <>
+                      <FontAwesome6 name="rotate" size={14} color="#FFFFFF" />
+                      <Text style={styles.updateButtonText}>可更新</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              )}
+
+              {!updateAvailable && (
+                <TouchableOpacity
+                  style={styles.updateButtonInactive}
+                  onPress={checkForUpdate}
+                  disabled={isCheckingUpdate}
+                >
+                  {isCheckingUpdate ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <>
+                      <FontAwesome6 name="check" size={14} color="#FFFFFF" />
+                      <Text style={styles.updateButtonText}>已是最新</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              )}
             </View>
           </LinearGradient>
         </View>
