@@ -97,6 +97,13 @@ export const styles = StyleSheet.create({
   functionSection: {
     marginBottom: 24,
   },
+  functionTitleRow: {
+    marginBottom: 16,
+  },
+  functionTitleLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   functionItem: {
     backgroundColor: '#F0F0F3',
     borderRadius: 24,
@@ -451,6 +458,33 @@ export const styles = StyleSheet.create({
     color: '#2D3436',
   },
   modalButtonTextConfirm: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  platformButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  platformButton: {
+    flex: 1,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  platformButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    gap: 8,
+  },
+  platformButtonText: {
     fontSize: 16,
     fontWeight: '700',
     color: '#FFFFFF',

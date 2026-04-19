@@ -124,16 +124,53 @@ export default function ProfileScreen() {
           </LinearGradient>
         </View>
 
+        {/* 内容运营建议 */}
         <View style={styles.functionSection}>
-          <TouchableOpacity style={styles.functionItem} onPress={() => router.push('/promotion-advice')}>
-            <View style={styles.functionIcon}>
-              <FontAwesome6 name="lightbulb" size={24} color="#F59E0B" />
+          <View style={styles.functionTitleRow}>
+            <View style={styles.functionTitleLeft}>
+              <View style={styles.functionIcon}>
+                <FontAwesome6 name="lightbulb" size={24} color="#F59E0B" />
+              </View>
+              <View>
+                <Text style={styles.functionTitle}>内容运营建议</Text>
+                <Text style={styles.functionDesc}>基于数据的内容运营</Text>
+              </View>
             </View>
-            <View style={styles.functionText}>
-              <Text style={styles.functionTitle}>内容运营建议</Text>
-              <Text style={styles.functionDesc}>基于数据的内容运营</Text>
-            </View>
-          </TouchableOpacity>
+          </View>
+
+          <View style={styles.platformButtons}>
+            <TouchableOpacity
+              style={styles.platformButton}
+              onPress={() => router.push('/content-operation-input', { platform: 'xiaohongshu' })}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#FF2442', '#FF6B6B']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.platformButtonGradient}
+              >
+                <FontAwesome6 name="heart" size={20} color="#FFFFFF" />
+                <Text style={styles.platformButtonText}>小红书</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.platformButton}
+              onPress={() => router.push('/content-operation-input', { platform: 'douyin' })}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#000000', '#1A1A1A']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.platformButtonGradient}
+              >
+                <FontAwesome6 name="music" size={20} color="#FFFFFF" />
+                <Text style={styles.platformButtonText}>抖音</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.publishedSection}>
