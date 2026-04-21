@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   userInfo: {
     flexDirection: 'row',
@@ -44,6 +45,27 @@ export const styles = StyleSheet.create({
   avatarText: {
     fontSize: 24,
     fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  versionInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  versionText: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.9)',
+    fontWeight: '600',
+  },
+  updateBadge: {
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  updateBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
     color: '#FFFFFF',
   },
   userText: {
@@ -77,12 +99,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     marginTop: 12,
     opacity: 0.7,
-  },
-  updateButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginLeft: 6,
   },
   storeName: {
     fontSize: 20,
@@ -157,6 +173,23 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  updateButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  updateButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#6C63FF',
+  },
+  updateDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF6B6B',
   },
   logoutButton: {
     backgroundColor: '#F0F0F3',

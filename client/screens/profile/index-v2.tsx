@@ -1,11 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { useFocusEffect } from 'expo-router';
+import * as Updates from 'expo-updates';
+import { VersionService } from '@/utils/versionService';
 import { styles } from './styles';
 
 type PublishedContent = {
@@ -24,6 +26,87 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newContentLink, setNewContentLink] = useState('');
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  const [currentVersion, setCurrentVersion] = useState<string>('1.0.0');
+
+  // 获取当前版本号
+  const getCurrentVersion = useCallback(() => {
+    if (!__DEV__) {
+      const version = VersionService.getCurrentVersion();
+      setCurrentVersion(version);
+    } else {
+      setCurrentVersion('1.0.0 (开发版)');
+    }
+  }, []);
+
+  // 检查更新
+  const checkForUpdate = useCallback(async () => {
+    setIsCheckingUpdate(true);
+    try {
+      const result = await VersionService.checkForUpdate();
+
+      if (result) {
+        if (result.needsForceUpdate || result.forceUpdate) {
+          // 强制更新
+          Alert.alert(
+            '需要更新',
+            `${result.updateMessage}\n\n当前版本: ${result.currentVersion}\n最新版本: ${result.latestVersion}`,
+            [
+              {
+                text: '立即更新',
+                onPress: async () => {
+                  const updated = await VersionService.fetchAndInstallUpdate();
+                  if (updated) {
+                    Alert.alert('更新成功', '应用将重启以应用更新。', [
+                      {
+                        text: '确定',
+                        onPress: () => VersionService.reloadApp(),
+                      },
+                    ]);
+                  }
+                },
+                style: 'destructive',
+              },
+            ]
+          );
+        } else if (result.needsUpdate) {
+          // 可选更新
+          setUpdateAvailable(true);
+          Alert.alert(
+            '发现新版本',
+            `${result.updateMessage}\n\n当前版本: ${result.currentVersion}\n最新版本: ${result.latestVersion}`,
+            [
+              { text: '暂不更新', style: 'cancel' },
+              {
+                text: '立即更新',
+                onPress: async () => {
+                  const updated = await VersionService.fetchAndInstallUpdate();
+                  if (updated) {
+                    Alert.alert('更新成功', '应用将重启以应用更新。', [
+                      {
+                        text: '确定',
+                        onPress: () => VersionService.reloadApp(),
+                      },
+                    ]);
+                  }
+                },
+              },
+            ]
+          );
+        } else {
+          // 已是最新版本
+          setUpdateAvailable(false);
+          Alert.alert('已是最新', '当前应用已是最新版本');
+        }
+      }
+    } catch (error) {
+      console.error('检查更新失败:', error);
+      Alert.alert('检查失败', '网络错误，请稍后重试');
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  }, []);
 
   const fetchPublishedContents = useCallback(async () => {
     if (!storeId) return;
@@ -47,6 +130,14 @@ export default function ProfileScreen() {
     }
   }, [storeId]);
 
+  // 页面加载时获取版本号
+  useFocusEffect(
+    useCallback(() => {
+      getCurrentVersion();
+    }, [getCurrentVersion])
+  );
+
+  // 页面加载时获取已发布内容
   useFocusEffect(
     useCallback(() => {
       fetchPublishedContents();
@@ -119,6 +210,14 @@ export default function ProfileScreen() {
                   <Text style={styles.userName}>{storeName}</Text>
                   <Text style={styles.userId}>编号: {storeId}</Text>
                 </View>
+              </View>
+              <View style={styles.versionInfo}>
+                <Text style={styles.versionText}>v{currentVersion}</Text>
+                {updateAvailable && (
+                  <View style={styles.updateBadge}>
+                    <Text style={styles.updateBadgeText}>有更新</Text>
+                  </View>
+                )}
               </View>
             </View>
           </LinearGradient>
@@ -205,6 +304,27 @@ export default function ProfileScreen() {
             ))
           )}
         </View>
+
+        {/* 检查更新按钮 */}
+        <TouchableOpacity
+          style={styles.updateButton}
+          onPress={checkForUpdate}
+          disabled={isCheckingUpdate}
+          activeOpacity={0.8}
+        >
+          {isCheckingUpdate ? (
+            <View style={styles.updateButtonContent}>
+              <ActivityIndicator size="small" color="#6C63FF" />
+              <Text style={styles.updateButtonText}>检查中...</Text>
+            </View>
+          ) : (
+            <View style={styles.updateButtonContent}>
+              <FontAwesome6 name="rotate" size={18} color="#6C63FF" />
+              <Text style={styles.updateButtonText}>检查更新</Text>
+              {updateAvailable && <View style={styles.updateDot} />}
+            </View>
+          )}
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>退出登录</Text>

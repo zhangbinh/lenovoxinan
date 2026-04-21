@@ -6,6 +6,7 @@ import contentRouter from "./routes/content";
 import hottopicsRouter from "./routes/hottopics";
 import promotionRouter from "./routes/promotion";
 import operationsRouter from "./routes/operations";
+import versionRouter from "./routes/version";
 import { startPromotionCronJob } from "./lib/promotion-cron";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/v1/content', contentRouter);
 app.use('/api/v1/hottopics', hottopicsRouter);
 app.use('/api/v1/promotion', promotionRouter);
 app.use('/api/v1/operations', operationsRouter);
+app.use('/api/v1/version', versionRouter);
 
 app.get('/api/v1/health', (req, res) => {
   console.log('Health check success');
