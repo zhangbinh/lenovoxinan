@@ -1,0 +1,11 @@
+# Robots.txt
+# 允许所有爬虫访问
+
+User-agent: *
+Allow: /
+
+# 禁止访问特定路径（如果需要）
+# Disallow: /api/
+# Disallow: /private/
+
+Sitemap: https://your-domain.com/sitemap.xml

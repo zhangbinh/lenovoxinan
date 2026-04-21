@@ -28,7 +28,18 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "meta": {
+        "viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+        "theme-color": "#4F46E5",
+        "apple-mobile-web-app-capable": "yes",
+        "apple-mobile-web-app-status-bar-style": "default",
+        "apple-mobile-web-app-title": "营销App",
+        "mobile-web-app-capable": "yes",
+        "format-detection": "telephone=no",
+        "msapplication-tap-highlight": "no",
+        "msapplication-config": "./browserconfig.xml"
+      }
     },
     "plugins": [
       process.env.EXPO_PUBLIC_BACKEND_BASE_URL ? [
