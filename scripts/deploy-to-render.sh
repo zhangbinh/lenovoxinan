@@ -1,0 +1,150 @@
+#!/bin/bash
+
+# Render 部署配置脚本
+# 帮助配置和部署后端到 Render 平台
+
+set -e
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo -e "${BLUE}========================================${NC}"
+echo -e "${BLUE}  Render 后端部署配置工具${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
+
+# 检查Git仓库
+echo -e "${YELLOW}检查Git仓库...${NC}"
+if [ ! -d "/workspace/projects/.git" ]; then
+    echo -e "${RED}Git仓库未初始化${NC}"
+    echo ""
+    echo "正在初始化Git仓库..."
+    cd /workspace/projects
+    git init
+    git add .
+    git commit -m "Initial commit - 准备部署到Render"
+    echo -e "${GREEN}✓ Git仓库已初始化${NC}"
+else
+    echo -e "${GREEN}✓ Git仓库已存在${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}========================================${NC}"
+echo -e "${GREEN}  Render 部署步骤${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
+
+echo "步骤 1/6: 推送代码到GitHub"
+echo "----------------------------------------"
+echo ""
+echo "请先在GitHub创建新仓库，然后运行："
+echo ""
+echo "  cd /workspace/projects"
+echo "  git remote add origin https://github.com/yourusername/yourrepo.git"
+echo "  git branch -M main"
+echo "  git push -u origin main"
+echo ""
+read -p "完成后按回车继续..."
+
+echo ""
+echo "步骤 2/6: 注册Render账号"
+echo "----------------------------------------"
+echo ""
+echo "1. 访问 https://render.com"
+echo "2. 点击 'Sign Up'"
+echo "3. 使用GitHub账号注册（推荐，免费）"
+echo ""
+read -p "注册完成后按回车继续..."
+
+echo ""
+echo "步骤 3/6: 创建PostgreSQL数据库"
+echo "----------------------------------------"
+echo ""
+echo "1. 登录Render后，点击 'New +'"
+echo "2. 选择 'Database'"
+echo "3. 选择 'PostgreSQL'"
+echo "4. 选择免费计划（Free）"
+echo "5. 配置："
+echo "   - Name: marketing-db"
+echo "   - Database: marketing"
+echo "   - User: marketing_user"
+echo "6. 点击 'Create Database'"
+echo "7. 等待创建完成（约2-3分钟）"
+echo ""
+read -p "数据库创建完成后按回车继续..."
+
+echo ""
+echo "步骤 4/6: 获取数据库连接信息"
+echo "----------------------------------------"
+echo ""
+echo "1. 在数据库页面，找到 'Connections'"
+echo "2. 复制 'Internal Database URL'"
+echo "3. 格式类似："
+echo "   postgres://marketing_user:password@dpg-xxx.oregon-postgres.render.com/marketing"
+echo ""
+read -p "获取连接信息后按回车继续..."
+
+echo ""
+echo "步骤 5/6: 创建Web服务"
+echo "----------------------------------------"
+echo ""
+echo "1. 点击 'New +'"
+echo "2. 选择 'Web Service'"
+echo "3. 选择 'Build and deploy from a Git repository'"
+echo "4. 选择刚才推送的GitHub仓库"
+echo "5. 配置："
+echo "   - Name: marketing-backend"
+echo "   - Region: Oregon (US West)"
+echo "   - Branch: main"
+echo "   - Runtime: Node"
+echo "   - Build Command: cd server && pnpm install && pnpm run build"
+echo "   - Start Command: cd server && node dist/index.js"
+echo ""
+echo "6. 展开Advanced，添加环境变量："
+echo "   - NODE_ENV: production"
+echo "   - PORT: 10000"
+echo "   - DATABASE_URL: postgres://marketing_user:password@dpg-xxx... (粘贴刚才复制的)"
+echo "   - EXPO_PUBLIC_BACKEND_BASE_URL: https://marketing-backend.onrender.com"
+echo ""
+echo "7. 点击 'Create Web Service'"
+echo "8. 等待部署完成（约5-10分钟）"
+echo ""
+read -p "Web服务创建完成后按回车继续..."
+
+echo ""
+echo "步骤 6/6: 测试后端"
+echo "----------------------------------------"
+echo ""
+echo "1. 在Render Dashboard点击服务名称"
+echo "2. 查看服务状态（应该显示 'Live'）"
+echo "3. 复制访问URL（例如：https://marketing-backend.onrender.com）"
+echo ""
+echo "4. 测试接口："
+echo "   curl https://marketing-backend.onrender.com/api/v1/health"
+echo ""
+echo "5. 测试登录："
+echo "   curl -X POST -H 'Content-Type: application/json' \\"
+echo "        -d '{\"storeId\":\"test\",\"storeName\":\"test\",\"authCode\":\"test\"}' \\"
+echo "        https://marketing-backend.onrender.com/api/v1/auth/verify"
+echo ""
+
+echo ""
+echo -e "${BLUE}========================================${NC}"
+echo -e "${GREEN}  部署完成！${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
+echo "如果部署成功，你会获得一个类似这样的URL："
+echo "  https://marketing-backend.onrender.com"
+echo ""
+echo "然后修改H5配置："
+echo "1. 编辑 dist/index.html"
+echo "2. 修改后端地址为Render地址"
+echo "3. 重新打包：tar -czf dist.tar.gz dist"
+echo "4. 上传到Netlify"
+echo ""
+echo "详细指南: /workspace/projects/BACKEND_DEPLOY_GUIDE.md"
+echo ""
+echo -e "${GREEN}祝您部署顺利！${NC}"
