@@ -45,15 +45,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (inputStoreId: string, inputStoreName: string, authCode: string) => {
+    console.log('=== AuthContext.login 开始 ===');
+    console.log('参数 - storeId:', inputStoreId);
+    console.log('参数 - storeName:', inputStoreName);
+    console.log('参数 - authCode:', authCode ? '***' : '');
+
     try {
       // 获取后端URL，Web环境下需要从环境变量或配置中获取
       let backendUrl = (process.env as any).EXPO_PUBLIC_BACKEND_BASE_URL;
+
+      console.log('环境变量 EXPO_PUBLIC_BACKEND_BASE_URL:', backendUrl);
+      console.log('Platform.OS:', Platform.OS);
 
       // Web环境下的特殊处理
       if (!backendUrl && Platform.OS === 'web') {
         // 如果环境变量未设置，尝试从全局配置获取
         if (typeof window !== 'undefined' && (window as any).__EXPO_PUBLIC_BACKEND_BASE_URL__) {
           backendUrl = (window as any).__EXPO_PUBLIC_BACKEND_BASE_URL__;
+          console.log('从 window.__EXPO_PUBLIC_BACKEND_BASE_URL__ 获取:', backendUrl);
         } else {
           // 默认使用相对路径，适用于同域部署
           backendUrl = 'http://localhost:9091';
@@ -61,10 +70,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      console.log('登录请求，后端URL:', backendUrl);
+      console.log('最终使用后端URL:', backendUrl);
 
       // 调用后端验证接口
-      const response = await fetch(`${backendUrl}/api/v1/auth/verify`, {
+      const apiUrl = `${backendUrl}/api/v1/auth/verify`;
+      console.log('请求URL:', apiUrl);
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,23 +86,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }),
       });
 
-      const data = await response.json();
+      console.log('响应状态:', response.status, response.statusText);
 
-      console.log('登录响应:', data);
+      const data = await response.json();
+      console.log('登录响应数据:', data);
 
       if (response.ok && data.valid) {
+        console.log('登录成功，保存到本地存储');
         await AsyncStorage.setItem(AUTH_KEY, 'true');
         await AsyncStorage.setItem(STORE_ID_KEY, inputStoreId);
         await AsyncStorage.setItem(STORE_NAME_KEY, inputStoreName);
         setIsAuthenticated(true);
         setStoreId(inputStoreId);
         setStoreName(inputStoreName);
+        console.log('=== AuthContext.login 成功 ===');
         return true;
       }
 
+      console.log('=== AuthContext.login 失败 ===');
       return false;
     } catch (error) {
-      console.error('登录失败:', error);
+      console.error('=== AuthContext.login 异常 ===', error);
       return false;
     }
   };

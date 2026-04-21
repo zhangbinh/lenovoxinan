@@ -14,38 +14,62 @@ export default function LoginScreen() {
   const { login } = useAuth();
   const router = useSafeRouter();
 
+  // 添加调试日志
   const handleLogin = async () => {
+    console.log('=== 开始登录流程 ===');
+    console.log('输入 - 店面编号:', storeId);
+    console.log('输入 - 店面名称:', storeName);
+    console.log('输入 - 登录密码:', authCode ? '***' : '');
+
     if (!storeId.trim()) {
+      console.log('验证失败：未输入店面编号');
       Alert.alert('错误', '请输入店面编号');
       return;
     }
 
     if (!storeName.trim()) {
+      console.log('验证失败：未输入店面名称');
       Alert.alert('错误', '请输入店面名称');
       return;
     }
 
     if (!authCode.trim()) {
+      console.log('验证失败：未输入登录密码');
       Alert.alert('错误', '请输入登录密码');
       return;
     }
 
+    console.log('验证通过，开始登录请求...');
     setLoading(true);
     try {
       const success = await login(storeId.trim(), storeName.trim(), authCode.trim());
 
+      console.log('登录结果:', success);
+
       if (success) {
         Alert.alert('成功', '登录成功', [
-          { text: '确定', onPress: () => router.replace('/') }
+          { text: '确定', onPress: () => {
+            console.log('用户点击确定，跳转到首页');
+            router.replace('/');
+          }}
         ]);
       } else {
+        console.log('登录失败：凭据错误');
         Alert.alert('错误', '店面编号、店面名称或登录密码错误');
       }
     } catch (error) {
+      console.error('登录异常:', error);
       Alert.alert('错误', '网络错误，请重试');
     } finally {
+      console.log('登录流程结束，重置loading状态');
       setLoading(false);
     }
+  };
+
+  // 测试点击事件
+  const handlePress = () => {
+    console.log('登录按钮被点击！');
+    handleLogin();
   };
 
   return (
@@ -115,10 +139,16 @@ export default function LoginScreen() {
 
             {/* 登录按钮 */}
             <TouchableOpacity
-              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-              onPress={handleLogin}
+              style={[
+                styles.loginButton,
+                loading && styles.loginButtonDisabled,
+                Platform.OS === 'web' && styles.loginButtonWeb
+              ]}
+              onPress={handlePress}
               disabled={loading}
-              activeOpacity={0.8}
+              activeOpacity={Platform.OS === 'web' ? 0.7 : 0.8}
+              testID="login-button"
+              accessibilityLabel="登录系统"
             >
               <LinearGradient
                 colors={['#6C63FF', '#896BFF']}

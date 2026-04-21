@@ -80,8 +80,16 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
+  loginButtonWeb: {
+    // Web平台下的特殊处理
+    cursor: 'pointer',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    WebkitTapHighlightColor: 'transparent',
+  },
   loginButtonDisabled: {
     opacity: 0.6,
+    cursor: 'not-allowed',
   },
   loginButtonGradient: {
     paddingVertical: 16,
