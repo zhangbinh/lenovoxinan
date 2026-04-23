@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { getBackendBaseUrl } from '@/utils/api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -51,26 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('参数 - authCode:', authCode ? '***' : '');
 
     try {
-      // 获取后端URL，Web环境下需要从环境变量或配置中获取
-      let backendUrl = (process.env as any).EXPO_PUBLIC_BACKEND_BASE_URL;
-
-      console.log('环境变量 EXPO_PUBLIC_BACKEND_BASE_URL:', backendUrl);
-      console.log('Platform.OS:', Platform.OS);
-
-      // Web环境下的特殊处理
-      if (!backendUrl && Platform.OS === 'web') {
-        // 如果环境变量未设置，尝试从全局配置获取
-        if (typeof window !== 'undefined' && (window as any).__EXPO_PUBLIC_BACKEND_BASE_URL__) {
-          backendUrl = (window as any).__EXPO_PUBLIC_BACKEND_BASE_URL__;
-          console.log('从 window.__EXPO_PUBLIC_BACKEND_BASE_URL__ 获取:', backendUrl);
-        } else {
-          // 默认使用相对路径，适用于同域部署
-          backendUrl = 'http://localhost:9091';
-          console.warn('EXPO_PUBLIC_BACKEND_BASE_URL 未设置，使用默认值:', backendUrl);
-        }
-      }
-
-      console.log('最终使用后端URL:', backendUrl);
+      // 使用统一的工具函数获取后端URL
+      const backendUrl = getBackendBaseUrl();
+      console.log('后端URL:', backendUrl);
 
       // 调用后端验证接口
       const apiUrl = `${backendUrl}/api/v1/auth/verify`;
