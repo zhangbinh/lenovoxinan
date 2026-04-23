@@ -26,9 +26,18 @@ app.use('/api/v1/promotion', promotionRouter);
 app.use('/api/v1/operations', operationsRouter);
 app.use('/api/v1/version', versionRouter);
 
+app.get('/', (req, res) => {
+  res.json({
+    message: '西南战区营销API服务',
+    version: '1.0.0',
+    status: 'running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.get('/api/v1/health', (req, res) => {
   console.log('Health check success');
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 
