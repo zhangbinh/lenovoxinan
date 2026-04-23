@@ -38,10 +38,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         "mobile-web-app-capable": "yes",
         "format-detection": "telephone=no",
         "msapplication-tap-highlight": "no",
-        "msapplication-config": "./browserconfig.xml",
-        "http-equiv": {
-          "Content-Security-Policy": "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * data: blob: https: http:; font-src * data: blob:; connect-src * data: blob: ws: wss: https: http:; worker-src * 'unsafe-inline' 'unsafe-eval' data: blob:; object-src 'none'"
-        }
+        "msapplication-config": "./browserconfig.xml"
       }
     },
     "plugins": [
