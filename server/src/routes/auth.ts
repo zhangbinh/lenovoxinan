@@ -16,8 +16,8 @@ router.post('/verify', async (req: Request, res: Response) => {
       });
     }
 
-    // 验证授权码（硬编码为 lenovoxinan）
-    const isValid = authCode === 'lenovoxinan';
+    // 验证授权码（硬编码为 lenovoxinan 或 test）
+    const isValid = authCode === 'lenovoxinan' || authCode === 'test';
 
     if (isValid) {
       res.json({
