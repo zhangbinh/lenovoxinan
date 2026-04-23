@@ -33,16 +33,23 @@ export default function PromotionAdviceScreen() {
           <Text style={styles.subtitle}>观察15日数据，给与内容运营的指导</Text>
         </View>
 
+        {/* 功能开发中提示 */}
+        <View style={styles.developmentNotice}>
+          <FontAwesome6 name="tools" size={16} color="#FF9500" />
+          <Text style={styles.developmentNoticeText}>功能开发中，敬请期待</Text>
+        </View>
+
         {/* 平台选择按钮 */}
         <View style={styles.buttonContainer}>
           {/* 小红书按钮 */}
           <TouchableOpacity
-            style={styles.platformButton}
-            onPress={() => handleSelectPlatform('xiaohongshu')}
-            activeOpacity={0.8}
+            style={[styles.platformButton, styles.disabledButton]}
+            onPress={() => {}}
+            disabled={true}
+            activeOpacity={1}
           >
             <LinearGradient
-              colors={['#FF2442', '#FF6B6B']}
+              colors={['#CCCCCC', '#DDDDDD']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.platformButtonGradient}
@@ -54,18 +61,19 @@ export default function PromotionAdviceScreen() {
                 <Text style={styles.platformName}>小红书</Text>
                 <Text style={styles.platformDesc}>生活方式分享社区</Text>
               </View>
-              <FontAwesome6 name="chevron-right" size={20} color="#FFFFFF" style={styles.arrowIcon} />
+              <FontAwesome6 name="lock" size={20} color="#FFFFFF" style={styles.arrowIcon} />
             </LinearGradient>
           </TouchableOpacity>
 
           {/* 抖音按钮 */}
           <TouchableOpacity
-            style={styles.platformButton}
-            onPress={() => handleSelectPlatform('douyin')}
-            activeOpacity={0.8}
+            style={[styles.platformButton, styles.disabledButton]}
+            onPress={() => {}}
+            disabled={true}
+            activeOpacity={1}
           >
             <LinearGradient
-              colors={['#000000', '#1A1A1A']}
+              colors={['#CCCCCC', '#DDDDDD']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.platformButtonGradient}
@@ -77,7 +85,7 @@ export default function PromotionAdviceScreen() {
                 <Text style={styles.platformName}>抖音</Text>
                 <Text style={styles.platformDesc}>短视频内容平台</Text>
               </View>
-              <FontAwesome6 name="chevron-right" size={20} color="#FFFFFF" style={styles.arrowIcon} />
+              <FontAwesome6 name="lock" size={20} color="#FFFFFF" style={styles.arrowIcon} />
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -136,6 +144,25 @@ const styles = StyleSheet.create({
     color: '#636E72',
     lineHeight: 20,
   },
+  developmentNotice: {
+    backgroundColor: '#FFF3E0',
+    borderWidth: 1,
+    borderColor: '#FFB74D',
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    marginHorizontal: 24,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  developmentNoticeText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#F57C00',
+    marginLeft: 8,
+  },
   buttonContainer: {
     paddingHorizontal: 24,
     gap: 16,
@@ -148,6 +175,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   platformButtonGradient: {
     flexDirection: 'row',

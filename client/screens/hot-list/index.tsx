@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Linking } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { getBackendBaseUrl } from '@/utils/api';
 import { styles } from './styles';
@@ -69,6 +69,22 @@ export default function HotListScreen() {
 
   const handlePlatformChange = (platform: string) => {
     setActivePlatform(platform);
+  };
+
+  const handleTopicPress = async (topic: HotTopic) => {
+    if (topic.url) {
+      try {
+        const supported = await Linking.canOpenURL(topic.url);
+        if (supported) {
+          await Linking.openURL(topic.url);
+        } else {
+          Alert.alert('提示', '无法打开该链接');
+        }
+      } catch (error) {
+        Alert.alert('错误', '打开链接失败');
+        console.error('打开链接失败:', error);
+      }
+    }
   };
 
   React.useEffect(() => {
@@ -168,7 +184,13 @@ export default function HotListScreen() {
           ) : hotTopics.length > 0 ? (
             <View style={styles.topicList}>
               {hotTopics.map((topic, index) => (
-                <View key={topic.id} style={styles.topicItem}>
+                <TouchableOpacity
+                  key={topic.id}
+                  style={styles.topicItem}
+                  onPress={() => handleTopicPress(topic)}
+                  activeOpacity={topic.url ? 0.7 : 1}
+                  disabled={!topic.url}
+                >
                   <View style={styles.rankBadge}>
                     <Text style={styles.rankText}>{index + 1}</Text>
                   </View>
@@ -184,10 +206,13 @@ export default function HotListScreen() {
                         </View>
                       )}
                       <Text style={styles.hotValue}>热度 {topic.hot}</Text>
+                      {topic.url && (
+                        <Text style={styles.linkIndicator}>🔗</Text>
+                      )}
                     </View>
                     <Text style={styles.topicDate}>{topic.date}</Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           ) : (

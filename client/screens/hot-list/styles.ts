@@ -177,6 +177,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#636E72',
   },
+  linkIndicator: {
+    fontSize: 14,
+    marginLeft: 8,
+  },
   topicDate: {
     fontSize: 12,
     color: '#B2BEC3',
