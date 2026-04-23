@@ -8,6 +8,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
+import { getBackendBaseUrl } from '@/utils/api';
 
 interface DailyTask {
   id: number;
@@ -333,8 +334,9 @@ export default function OperationsAssistant() {
        * 服务端文件：server/src/routes/operations.ts
        * 接口：GET /api/v1/operations/tasks?storeId=xxx&date=xxx
        */
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/operations/tasks?storeId=${storeId}&date=${dateStr}`
+        `${backendUrl}/api/v1/operations/tasks?storeId=${storeId}&date=${dateStr}`
       );
       const result = await response.json();
 
@@ -358,8 +360,9 @@ export default function OperationsAssistant() {
        * 服务端文件：server/src/routes/operations.ts
        * 接口：GET /api/v1/operations/reviews?storeId=xxx
        */
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/operations/reviews?storeId=${storeId}&limit=3`
+        `${backendUrl}/api/v1/operations/reviews?storeId=${storeId}&limit=3`
       );
       const result = await response.json();
 
@@ -398,8 +401,9 @@ export default function OperationsAssistant() {
        * 接口：POST /api/v1/operations/tasks/generate
        * Body 参数：storeId: string, date: string
        */
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/operations/tasks/generate`,
+        `${backendUrl}/api/v1/operations/tasks/generate`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -444,8 +448,9 @@ export default function OperationsAssistant() {
        * 接口：POST /api/v1/operations/tasks/:taskId/complete
        * Body 参数：notes?: string
        */
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/operations/tasks/${selectedTask.id}/complete`,
+        `${backendUrl}/api/v1/operations/tasks/${selectedTask.id}/complete`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

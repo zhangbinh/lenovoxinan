@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { useAuth } from '@/contexts/AuthContext';
+import { getBackendBaseUrl } from '@/utils/api';
 import { styles } from './styles';
 
 interface ContentItem {
@@ -45,7 +46,8 @@ export default function ContentDisplayScreen() {
        * 接口：POST /api/v1/content/generate
        * Body 参数：topics: string[], type: string, remark: string
        */
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/content/generate`, {
+      const backendUrl = getBackendBaseUrl();
+      const response = await fetch(`${backendUrl}/api/v1/content/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { getBackendBaseUrl } from '@/utils/api';
 
 type PlatformType = 'douyin' | 'xiaohongshu';
 
@@ -236,8 +237,9 @@ export default function PromotionAdviceV3() {
        * 服务端文件：server/src/routes/promotion.ts
        * 接口：GET /api/v1/promotion/contents?storeId=xxx
        */
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/contents?storeId=${storeId}`
+        `${backendUrl}/api/v1/promotion/contents?storeId=${storeId}`
       );
       const result = await response.json();
 
@@ -285,7 +287,8 @@ export default function PromotionAdviceV3() {
        * 接口：POST /api/v1/promotion/advice
        * Body 参数：publishUrl: string, publishDate: string
        */
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/advice`, {
+      const backendUrl = getBackendBaseUrl();
+      const response = await fetch(`${backendUrl}/api/v1/promotion/advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

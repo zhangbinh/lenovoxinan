@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Screen } from '@/components/Screen';
+import { getBackendBaseUrl } from '@/utils/api';
 import { styles } from './styles';
 
 interface HotTopic {
@@ -42,8 +43,9 @@ export default function HotListScreen() {
   const fetchHotTopics = async () => {
     setLoading(true);
     try {
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/hottopics?platform=${activePlatform}&timeRange=${timeRange}&category=${category}`
+        `${backendUrl}/api/v1/hottopics?platform=${activePlatform}&timeRange=${timeRange}&category=${category}`
       );
       const data = await response.json();
 

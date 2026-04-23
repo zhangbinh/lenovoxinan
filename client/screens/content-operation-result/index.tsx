@@ -5,6 +5,7 @@ import { Screen } from '@/components/Screen';
 import { useSafeRouter, useSafeSearchParams } from '@/hooks/useSafeRouter';
 import { Platform } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { getBackendBaseUrl } from '@/utils/api';
 
 type PlatformType = 'xiaohongshu' | 'douyin';
 
@@ -36,7 +37,8 @@ export default function ContentOperationResultScreen() {
        * 接口：POST /api/v1/promotion/advice
        * Body 参数：publishUrl: string, platform: string
        */
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/advice`, {
+      const backendUrl = getBackendBaseUrl();
+      const response = await fetch(`${backendUrl}/api/v1/promotion/advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

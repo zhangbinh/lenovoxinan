@@ -7,6 +7,7 @@ import { Screen } from '@/components/Screen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 import { useFocusEffect } from 'expo-router';
+import { getBackendBaseUrl } from '@/utils/api';
 import { styles } from './styles';
 
 type PublishedContent = {
@@ -36,7 +37,8 @@ export default function ProfileScreen() {
     if (!storeId) return;
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/contents?storeId=${storeId}`);
+      const backendUrl = getBackendBaseUrl();
+      const response = await fetch(`${backendUrl}/api/v1/promotion/contents?storeId=${storeId}`);
       const result = await response.json();
       if (result.success && result.data) {
         const now = new Date();
@@ -71,8 +73,9 @@ export default function ProfileScreen() {
     }
     try {
       const platform = selectedPlatform;
+      const backendUrl = getBackendBaseUrl();
 
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/content`, {
+      const response = await fetch(`${backendUrl}/api/v1/promotion/content`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

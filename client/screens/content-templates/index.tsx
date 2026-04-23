@@ -3,6 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { FontAwesome6 } from '@expo/vector-icons';
+import { getBackendBaseUrl } from '@/utils/api';
 
 interface ContentTemplate {
   id: number;
@@ -173,8 +174,9 @@ export default function ContentTemplates() {
       if (selectedPlatform !== 'all') params.append('platform', selectedPlatform);
       if (selectedContentType !== 'all') params.append('contentType', selectedContentType);
 
+      const backendUrl = getBackendBaseUrl();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/operations/templates?${params.toString()}`
+        `${backendUrl}/api/v1/operations/templates?${params.toString()}`
       );
       const result = await response.json();
 

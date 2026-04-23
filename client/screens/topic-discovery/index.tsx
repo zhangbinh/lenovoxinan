@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator,
 import { LinearGradient } from 'expo-linear-gradient';
 import { Screen } from '@/components/Screen';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
+import { getBackendBaseUrl } from '@/utils/api';
 import { styles } from './styles';
 
 interface Topic {
@@ -28,10 +29,11 @@ export default function TopicDiscoveryScreen() {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/topics/generate`, {
+      const backendUrl = getBackendBaseUrl();
+      const response = await fetch(`${backendUrl}/api/v1/topics/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           topic: topicInput.trim(),
           remark: remarkInput.trim()
         }),
@@ -46,6 +48,7 @@ export default function TopicDiscoveryScreen() {
       }
     } catch (error) {
       Alert.alert('错误', '网络错误，请重试');
+      console.error('生成话题失败:', error);
     } finally {
       setLoading(false);
     }

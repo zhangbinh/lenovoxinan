@@ -6,6 +6,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
+import { getBackendBaseUrl } from '@/utils/api';
 
 type PlatformType = 'douyin' | 'xiaohongshu';
 
@@ -235,7 +236,8 @@ export default function PromotionAdvice() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_BASE_URL}/api/v1/promotion/advice`, {
+      const backendUrl = getBackendBaseUrl();
+      const response = await fetch(`${backendUrl}/api/v1/promotion/advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
