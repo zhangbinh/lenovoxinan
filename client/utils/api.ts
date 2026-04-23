@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
  * 获取后端API地址
@@ -21,4 +22,42 @@ export function getBackendBaseUrl(): string {
 
   console.log('Backend URL:', backendUrl);
   return backendUrl;
+}
+
+/**
+ * Web环境安全的AsyncStorage封装
+ * Web环境下使用localStorage作为fallback
+ */
+export async function safeSetItem(key: string, value: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (error) {
+    console.warn('AsyncStorage失败，使用localStorage:', error);
+    if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
+      localStorage.setItem(key, value);
+    }
+  }
+}
+
+export async function safeGetItem(key: string): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(key);
+  } catch (error) {
+    console.warn('AsyncStorage失败，使用localStorage:', error);
+    if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  }
+}
+
+export async function safeRemoveItem(key: string): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    console.warn('AsyncStorage失败，使用localStorage:', error);
+    if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
+      localStorage.removeItem(key);
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getBackendBaseUrl } from '@/utils/api';
+import { getBackendBaseUrl, safeSetItem, safeGetItem, safeRemoveItem } from '@/utils/api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -24,19 +25,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [storeName, setStoreName] = useState<string | null>(null);
 
   const checkAuth = async () => {
+    console.log('=== AuthContext.checkAuth 开始 ===');
     try {
-      const auth = await AsyncStorage.getItem(AUTH_KEY);
-      const sid = await AsyncStorage.getItem(STORE_ID_KEY);
-      const sname = await AsyncStorage.getItem(STORE_NAME_KEY);
+      const auth = await safeGetItem(AUTH_KEY);
+      const sid = await safeGetItem(STORE_ID_KEY);
+      const sname = await safeGetItem(STORE_NAME_KEY);
+      console.log('本地存储 - auth:', auth);
+      console.log('本地存储 - storeId:', sid);
+      console.log('本地存储 - storeName:', sname);
+
       if (auth === 'true' && sid && sname) {
+        console.log('已登录，恢复会话');
         setIsAuthenticated(true);
         setStoreId(sid);
         setStoreName(sname);
+      } else {
+        console.log('未登录或会话已过期');
       }
     } catch (error) {
       console.error('检查授权失败:', error);
     } finally {
       setIsLoading(false);
+      console.log('=== AuthContext.checkAuth 结束 ===');
     }
   };
 
@@ -76,9 +86,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (response.ok && data.valid) {
         console.log('登录成功，保存到本地存储');
-        await AsyncStorage.setItem(AUTH_KEY, 'true');
-        await AsyncStorage.setItem(STORE_ID_KEY, inputStoreId);
-        await AsyncStorage.setItem(STORE_NAME_KEY, inputStoreName);
+        await safeSetItem(AUTH_KEY, 'true');
+        await safeSetItem(STORE_ID_KEY, inputStoreId);
+        await safeSetItem(STORE_NAME_KEY, inputStoreName);
         setIsAuthenticated(true);
         setStoreId(inputStoreId);
         setStoreName(inputStoreName);
@@ -96,9 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem(AUTH_KEY);
-      await AsyncStorage.removeItem(STORE_ID_KEY);
-      await AsyncStorage.removeItem(STORE_NAME_KEY);
+      await safeRemoveItem(AUTH_KEY);
+      await safeRemoveItem(STORE_ID_KEY);
+      await safeRemoveItem(STORE_NAME_KEY);
       setIsAuthenticated(false);
       setStoreId(null);
       setStoreName(null);
