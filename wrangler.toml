@@ -1,0 +1,25 @@
+# Cloudflare Pages 配置文件
+
+[build]
+command = "chmod +x build.sh && ./build.sh"
+cwd = "."
+publish = "client/dist"
+
+[build.environment]
+NODE_VERSION = "18"
+
+# SPA路由支持
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+# 安全headers
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+
+# 禁用CSP（允许React Native Web使用eval）
+# Cloudflare Pages 默认不添加CSP，所以不需要配置
