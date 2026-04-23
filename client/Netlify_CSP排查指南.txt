@@ -1,0 +1,206 @@
+# 🔍 Netlify CSP问题完整排查指南
+
+## 📋 问题现状
+
+你仍然遇到CSP错误，说明Netlify仍然在应用某种CSP策略。
+
+---
+
+## 🎯 立即检查清单（按顺序执行）
+
+### 检查1：查看Netlify Dashboard的HTTP Headers
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 选择你的站点
+3. 点击 "Site settings" > "Build & deploy"
+4. 找到 "HTTP headers" 部分
+5. 查看是否有自定义的 Content-Security-Policy
+
+**如果找到了CSP配置**：
+- 点击 "Edit" 或 "Delete"
+- 删除所有CSP相关的配置
+- 保存更改
+
+**如果没有找到**：继续检查2
+
+---
+
+### 检查2：查看Netlify插件
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 选择你的站点
+3. 点击 "Plugins"
+4. 查看是否有以下插件：
+   - Netlify Security Headers
+   - Netlify CSP
+   - Netlify Headers
+   - 任何安全相关的插件
+
+**如果找到了**：
+- 点击插件
+- 禁用或删除插件
+- 重新部署
+
+**如果没有找到**：继续检查3
+
+---
+
+### 检查3：查看环境变量
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 选择你的站点
+3. 点击 "Site settings" > "Environment variables"
+4. 查找以下变量：
+   - CONTENT_SECURITY_POLICY
+   - CSP
+   - 任何包含 "security" 或 "csp" 的变量
+
+**如果找到了**：
+- 删除这些变量
+- 保存更改
+- 重新部署
+
+**如果没有找到**：继续检查4
+
+---
+
+### 检查4：查看边缘函数
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 选择你的站点
+3. 点击 "Edge functions"
+4. 查看是否有添加了CSP的函数
+
+**如果找到了**：
+- 删除或修改函数
+- 重新部署
+
+**如果没有找到**：继续检查5
+
+---
+
+### 检查5：查看站点配置
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 选择你的站点
+3. 点击 "Site configuration" 或 "netlify.toml" 标签
+4. 查看是否有全局CSP配置
+
+**如果找到了**：
+- 删除CSP配置
+- 保存更改
+- 重新部署
+
+**如果没有找到**：继续检查6
+
+---
+
+### 检查6：清除Netlify缓存并重新部署
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 选择你的站点
+3. 点击 "Deploys"
+4. 点击 "Deploy triggers"
+5. 点击 "Clear cache and deploy site"
+6. 等待部署完成
+
+---
+
+## 🚀 重新部署
+
+完成上述检查后，重新部署：
+
+**步骤**：
+1. 下载最新的 `dist.tar.gz`
+2. 解压文件
+3. 拖拽到Netlify
+4. 等待部署完成
+
+---
+
+## 🧪 验证
+
+部署完成后：
+
+1. **清除浏览器缓存**
+   - `Ctrl + Shift + Delete`
+   - 选择 "缓存的图片和文件"
+   - 点击 "清除数据"
+
+2. **强制刷新页面**
+   - `Ctrl + Shift + R`
+
+3. **检查浏览器控制台**
+   - 按 `F12` 打开开发者工具
+   - 查看是否还有CSP错误
+
+---
+
+## ❌ 如果仍然有CSP错误
+
+### 方案A：联系Netlify支持
+
+如果以上所有检查都做了，但仍然有CSP错误，可能是Netlify的全局默认配置问题。
+
+**步骤**：
+1. 登录 Netlify Dashboard
+2. 点击右下角的 "Support" 或 "Help"
+3. 提交工单，说明问题：
+   - 你的站点URL
+   - 你想禁用CSP的原因（React Native Web需要eval）
+   - 你已经尝试过的所有步骤
+
+### 方案B：切换到Vercel
+
+Vercel对React Native Web的支持更好，不会有CSP问题。
+
+**步骤**：
+1. 访问 https://vercel.com/
+2. 创建账户
+3. 导入你的GitHub仓库
+4. 配置构建命令：
+   - 构建命令：`cd client && npx expo export --platform web --output-dir dist`
+   - 输出目录：`client/dist`
+5. 部署
+
+**Vercel的优势**：
+- ✅ 不会强制添加CSP
+- ✅ 对React Native Web的支持更好
+- ✅ 构建速度更快
+- ✅ 免费额度更大
+
+---
+
+## 📊 当前部署文件
+
+**文件位置**：`/workspace/projects/client/dist.tar.gz`
+
+**最新修改**：
+- ✅ `index.html`：添加了多个CSP meta标签（更宽松）
+- ✅ `netlify.toml`：空文件
+- ✅ `_redirects`：添加了CSP策略
+
+**文件大小**：2.9 MB
+
+---
+
+## 🎯 核心问题
+
+Netlify可能在以下位置添加了CSP：
+1. ❌ HTTP headers（自定义）
+2. ❌ 插件（自动添加）
+3. ❌ 环境变量（传递）
+4. ❌ 边缘函数（代码添加）
+5. ❌ 全局配置（默认）
+
+你需要逐一检查并删除所有这些配置。
+
+---
+
+**按照上述检查清单逐项排查，一定能找到CSP的来源！** 🎯
