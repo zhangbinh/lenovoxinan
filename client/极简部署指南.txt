@@ -1,0 +1,70 @@
+# 🚀 极简部署指南（复制粘贴就行）
+
+## 📦 下载和部署
+
+### 第1步：下载文件
+下载 `/workspace/projects/client/dist.tar.gz` (2.9 MB)
+
+### 第2步：解压
+```bash
+tar -xzf dist.tar.gz
+```
+
+### 第3步：部署
+拖拽 `dist` 文件夹到Netlify
+
+### 第4步：完成
+✅ 访问你的网站，如果无CSP错误，就成功了！
+
+---
+
+## 📁 文件说明（3个核心文件）
+
+### 1. `netlify.toml` - 空文件
+```toml
+# 空文件 - 让Netlify不添加任何CSP
+```
+
+### 2. `_redirects` - SPA路由支持
+```
+/*  /index.html  200
+```
+
+### 3. `index.html` - 包含CSP Meta标签
+```html
+<meta http-equiv="Content-Security-Policy" content="...unsafe-eval..." />
+```
+
+---
+
+## 🎯 为什么能解决？
+
+1. **netlify.toml 空文件** → Netlify不添加CSP响应头
+2. **index.html Meta标签** → 浏览器使用Meta标签的CSP（因为服务端没发）
+3. **Meta标签包含 unsafe-eval** → 允许React Native Web使用eval
+
+> **核心原理**：删除所有服务端CSP，让浏览器使用Meta标签的CSP。
+
+---
+
+## ✅ 验证方法
+
+访问你的网站，如果：
+- ✅ 无 "Content Security Policy" 错误
+- ✅ 应用正常运行
+- ✅ 登录功能正常
+
+就成功了！
+
+---
+
+## ❌ 如果还有CSP错误
+
+1. 登录Netlify Dashboard
+2. Site settings > Build & deploy > HTTP headers
+3. 删除所有CSP相关的headers
+4. 重新部署
+
+---
+
+**就这么简单！** 🎉
