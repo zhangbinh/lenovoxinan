@@ -4,18 +4,17 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  esbuild: 0.27.2
+
+patchedDependencies:
+  expo@54.0.33:
+    hash: oibatoworxrl4npxv627d5aa3e
+    path: patches/expo@54.0.33.patch
+
 importers:
 
   .: {}
-
-  backend:
-    dependencies:
-      cors:
-        specifier: ^2.8.6
-        version: 2.8.6
-      express:
-        specifier: ^4.22.1
-        version: 4.22.1
 
   client:
     dependencies:
