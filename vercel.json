@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "buildCommand": "cd client && npx expo export --platform web --output-dir dist",
+  "outputDirectory": "client/dist",
+  "builds": [
+    {
+      "src": "client/dist/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1",
+      "headers": {
+        "X-Frame-Options": "DENY"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
