@@ -1,4 +1,4 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src * blob: data: 'unsafe-inline' 'unsafe-eval'; script-src * blob: data: 'unsafe-inline' 'unsafe-eval'; style-src * blob: data: 'unsafe-inline'; img-src * blob: data: https: http:; font-src * blob: data:; connect-src * blob: data: ws: wss: https: http:; frame-src * blob: data:; worker-src * blob: data: 'unsafe-inline' 'unsafe-eval';"
+    X-Frame-Options = "DENY"
